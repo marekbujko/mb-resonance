@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title" data-sk="ONLINE RADIO - Resonance" data-en="ONLINE RADIO - Resonance">ONLINE RADIO - Resonance</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAzMiAzMic+CiAgPHJlY3Qgd2lkdGg9JzMyJyBoZWlnaHQ9JzMyJyByeD0nNycgZmlsbD0nIzFhMTAwOCcvPgogIDxjaXJjbGUgY3g9JzE2JyBjeT0nMTYnIHI9JzknIGZpbGw9J25vbmUnIHN0cm9rZT0nI2Q0ODIwYScgc3Ryb2tlLXdpZHRoPScxLjUnIG9wYWNpdHk9Jy40Jy8+CiAgPGNpcmNsZSBjeD0nMTYnIGN5PScxNicgcj0nNScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZDQ4MjBhJyBzdHJva2Utd2lkdGg9JzEuNScgb3BhY2l0eT0nLjYnLz4KICA8Y2lyY2xlIGN4PScxNicgY3k9JzE2JyByPScyLjUnIGZpbGw9JyNmZmI3MzInLz4KICA8bGluZSB4MT0nMTYnIHkxPSc3JyB4Mj0nMjMnIHkyPScyJyBzdHJva2U9JyNkNDgyMGEnIHN0cm9rZS13aWR0aD0nMS44JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIG9wYWNpdHk9Jy44Jy8+Cjwvc3ZnPg==">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAzMiAzMic+CiAgPHJlY3Qgd2lkdGg9JzMyJyBoZWlnaHQ9JzMyJyByeD0nNycgZmlsbD0nIzFhMTAwOCcvPgogIDxjaXJjbGUgY3g9JzE2JyBjeT0nMTYnIHI9JzknIGZpbGw9J25vbmUnIHN0cm9rZT0nI2Q0ODIwYScgc3Ryb2tlLXdpZHRoPScxLjUnIG9wYWNpdHk9Jy40Jy8+CiAgPGNpcmNsZSBjeD0nMTYnIGN5PScxNicgcj0nNScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZDQ4MjBhJyBzdHJva2Utd2lkdGg9JzEuNScgb3BhY2l0eT0nLjYnLz4KICA8Y2lyY2xlIGN4PScxNicgY3k9JzE2JyByPScyLjUnIGZpbGw9JyNmZmI3MzInLz4KICA8bGluZSB4MT0nMTYnIHkxPSc3JyB4Mj0nMjMnIHkyPScyJyBzdHJva2U9JyNkNDgyMGEnIHN0cm9rZS13aWR0aD0nMS44JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIG9wYWNpdHk9Jy44Jy8+Cjwvc3ZnPg==">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1008">
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Special+Elite&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -687,6 +692,53 @@
 
   .search-section, .serial-monitor, .stats-panel,
   .case, #lcd { transition: background 0.5s, border-color 0.5s, box-shadow 0.5s; }
+
+  /* ── MOBILE / iPHONE ─────────────────────────────────────── */
+  @media (max-width: 480px) {
+    body { padding: 12px 10px; align-items: flex-start; }
+
+    .radio-cabinet {
+      max-width: 100%;
+      padding: 16px 14px 20px;
+      border-radius: 14px 14px 18px 18px;
+    }
+
+    /* Speaker grille shorter on mobile */
+    #cw, .speaker-grille { height: 120px !important; }
+
+    /* Knobs smaller */
+    .knob { width: 44px !important; height: 44px !important; }
+    .controls-section { gap: 10px !important; }
+    .play-btn-retro { width: 54px !important; height: 54px !important; font-size: 1.1rem !important; }
+    .aux-btn { padding: 5px 9px !important; font-size: 0.82rem !important; }
+
+    /* LCD smaller */
+    .lcd-station { font-size: 1rem !important; }
+    .lcd-track { font-size: 0.78rem !important; }
+
+    /* Search */
+    .search-input-retro { font-size: 0.9rem !important; padding: 6px 8px !important; }
+    .search-btn-retro { padding: 6px 10px !important; font-size: 0.82rem !important; }
+    .filters-retro { gap: 6px !important; }
+    .filters-retro select { font-size: 0.8rem !important; padding: 5px 6px !important; }
+    .result-item-retro { font-size: 0.82rem !important; padding: 7px 8px !important; }
+    .stop-btn-retro { font-size: 0.82rem !important; padding: 8px !important; }
+
+    /* Stats panel — full width overlay on mobile */
+    .stats-panel {
+      width: 85vw !important;
+      left: auto !important;
+      right: 0 !important;
+      top: 0 !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      border-radius: 14px 0 0 14px !important;
+    }
+
+    /* Bottom strip */
+    .model-num { font-size: 0.62rem !important; }
+    .lang-btn { font-size: 11px !important; padding: 1px 5px !important; }
+  }
 </style>
 </head>
 <body>
