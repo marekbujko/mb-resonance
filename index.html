@@ -1674,6 +1674,44 @@ document.addEventListener('click', e => {
 
 document.addEventListener('DOMContentLoaded', renderFavs);
 
+/* ── iPhone scale fix ── */
+(function() {
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!isIOS) return;
+
+  function scaleToFit() {
+    var wrapper = document.querySelector('.page-wrapper');
+    if (!wrapper) return;
+    var cabinet = document.querySelector('.radio-cabinet');
+    if (!cabinet) return;
+
+    // Reset scale first to measure natural size
+    wrapper.style.transform = '';
+    wrapper.style.transformOrigin = 'top center';
+
+    var cabinetW = cabinet.offsetWidth;
+    var screenW  = window.innerWidth;
+    var padding  = 16; // px each side
+    var available = screenW - padding * 2;
+
+    if (cabinetW > available) {
+      var scale = available / cabinetW;
+      wrapper.style.transform = 'scale(' + scale + ')';
+      wrapper.style.transformOrigin = 'top center';
+      // Collapse the extra vertical space that transform leaves behind
+      var cabinetH = cabinet.offsetHeight;
+      var shrunk = cabinetH * scale;
+      wrapper.style.marginBottom = '-' + (cabinetH - shrunk) + 'px';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', scaleToFit);
+  window.addEventListener('resize', scaleToFit);
+  // Also run after fonts load (VT323 / Bebas Neue can shift layout)
+  document.fonts && document.fonts.ready.then(scaleToFit);
+})();
+
 /* ── TUNING KNOB — cycles through search results ── */
 let tuneIndex = -1;
 let tuneAngle = 0;
