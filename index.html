@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="sk" id="root">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ONLINE RADIO - Resonance</title>
+<title id="page-title" data-sk="ONLINE RADIO - Resonance" data-en="ONLINE RADIO - Resonance">ONLINE RADIO - Resonance</title>
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Special+Elite&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -101,10 +101,6 @@
     display: flex;
     align-items: flex-start;
     gap: 0;
-    transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
-  }
-  .page-wrapper.stats-open {
-    transform: translateX(-115px);
   }
 
   /* ── RADIO CABINET ───────────────────────────────────────── */
@@ -483,22 +479,23 @@
   .vu-bar.active { opacity: 0.7; animation: vuAnim var(--vd,0.4s) ease-in-out infinite alternate; animation-delay: var(--vdelay,0s); }
   @keyframes vuAnim { from{height:var(--vmin,2px)} to{height:var(--vmax,12px)} }
 
-  /* ── STATS PANEL (slides in from right) ──────────────────── */
+  /* ── STATS PANEL (slides out from right edge of radio) ───── */
   .stats-panel {
     width: 230px;
-    min-width: 230px;
     background: linear-gradient(160deg, var(--stats-bg1) 0%, var(--stats-bg2) 100%);
     border: 1px solid var(--stats-border);
     border-left: none;
     border-radius: 0 16px 16px 0;
-    box-shadow: 8px 0 40px rgba(0,0,0,0.5) inset, 4px 0 20px rgba(0,0,0,0.6);
+    box-shadow: 8px 0 40px rgba(0,0,0,0.7), inset 4px 0 20px rgba(0,0,0,0.4);
     padding: 14px 14px;
     font-family: 'VT323', monospace;
     opacity: 0;
     pointer-events: none;
     display: none;
-    position: relative;
-    overflow: hidden;
+    position: fixed;
+    z-index: 50;
+    overflow-y: auto;
+    max-height: 90vh;
   }
   .stats-panel::before {
     content: '';
@@ -667,7 +664,27 @@
   }
 
   /* ── THEME TRANSITIONS ── */
-  .radio-cabinet, .freq-display, .speaker-grille,
+  .lang-switcher {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .lang-btn {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    border: 1px solid rgba(212,130,10,0.25);
+    background: transparent;
+    color: var(--chrome);
+    opacity: 0.45;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .lang-btn:hover { opacity: 0.75; color: var(--amber); }
+  .lang-btn.active { background: rgba(60,30,10,0.9); color: var(--amber-glow); border-color: rgba(212,130,10,0.6); opacity: 1; }
+
   .search-section, .serial-monitor, .stats-panel,
   .case, #lcd { transition: background 0.5s, border-color 0.5s, box-shadow 0.5s; }
 </style>
@@ -685,7 +702,7 @@
     <!-- Brand -->
     <div class="brand-strip">
       <div class="brand-name">RESONANCE</div>
-      <div class="brand-sub">Online Radio Receiver</div>
+      <div class="brand-sub" data-sk="Online Radio Receiver" data-en="Online Radio Receiver">Online Radio Receiver</div>
     </div>
 
     <!-- Speaker Grille -->
@@ -698,28 +715,28 @@
     <!-- LCD Display -->
     <div class="freq-display">
       <div class="lcd-row">
-        <div class="lcd-station" id="station-name">[ VYBER STANICU ]</div>
+        <div class="lcd-station" id="station-name" data-idle-sk="[ VYBER STANICU ]" data-idle-en="[ SELECT STATION ]">[ VYBER STANICU ]</div>
         <div class="on-air" id="on-air-badge"><div class="on-air-dot"></div>ON AIR</div>
       </div>
-      <div class="lcd-track" id="now-playing" title="Práve hrá">♪ —</div>
+      <div class="lcd-track" id="now-playing" title="" data-title-sk="Práve hrá" data-title-en="Now playing">♪ —</div>
       <div class="lcd-meta" id="station-meta">— · —</div>
     </div>
 
     <!-- Controls -->
     <div class="controls-section">
       <div class="knob-group">
-        <div class="knob" title="Ladenie" id="tuning-knob" onclick="tunePrev()"></div>
+        <div class="knob" id="tuning-knob" onclick="tunePrev()" data-title-sk="Ladenie" data-title-en="Tuning"></div>
         <div class="knob-label">TUNING</div>
       </div>
       <div class="play-controls">
         <div class="aux-btns" style="align-items:center;">
-          <button class="aux-btn" onclick="toggleFavourite()" id="fav-ctrl-btn" title="Obľúbené">☆</button>
+          <button class="aux-btn" onclick="toggleFavourite()" id="fav-ctrl-btn" data-title-sk="Obľúbené" data-title-en="Favourites">☆</button>
           <button class="play-btn-retro" id="play-btn" onclick="togglePlay()">▶</button>
-          <button class="aux-btn stats-btn" id="stats-toggle-btn" onclick="toggleStatsPanel()" title="Štatistiky">▤</button>
+          <button class="aux-btn stats-btn" id="stats-toggle-btn" onclick="toggleStatsPanel()" data-title-sk="Štatistiky" data-title-en="Statistics">▤</button>
         </div>
       </div>
       <div class="knob-group">
-        <div class="knob" title="Hlasitosť" id="vol-knob" onclick="rotateVolKnob()"></div>
+        <div class="knob" id="vol-knob" onclick="rotateVolKnob()" data-title-sk="Hlasitosť" data-title-en="Volume"></div>
         <div class="knob-label">VOLUME</div>
       </div>
     </div>
@@ -733,15 +750,15 @@
 
     <!-- Search section -->
     <div class="search-section">
-      <div class="search-title">HĽADANIE STANÍC</div>
+      <div class="search-title" data-sk="HĽADANIE STANÍC" data-en="SEARCH STATIONS">HĽADANIE STANÍC</div>
       <div class="search-row-retro">
-        <input type="text" class="search-input-retro" id="radio-search" placeholder="NAZOV STANICE..." onkeydown="if(event.key==='Enter')searchRadio()">
-        <button class="search-btn-retro" onclick="searchRadio()">HĽADAJ</button>
+        <input type="text" class="search-input-retro" id="radio-search" placeholder="NAZOV STANICE..." data-placeholder-sk="NAZOV STANICE..." data-placeholder-en="STATION NAME..." onkeydown="if(event.key==='Enter')searchRadio()">
+        <button class="search-btn-retro" onclick="searchRadio()" data-sk="HĽADAJ" data-en="SEARCH">HĽADAJ</button>
         <button class="fav-btn-retro" id="fav-toggle-btn" onclick="toggleFavPopup()">☆</button>
       </div>
       <div class="filters-retro">
         <select id="radio-filter-country">
-          <option value="">VŠETKY KRAJINY</option>
+          <option value="" data-sk="VŠETKY KRAJINY" data-en="ALL COUNTRIES">VŠETKY KRAJINY</option>
           <option value="SK">SLOVENSKO</option>
           <option value="CZ">ČESKÁ REP.</option>
           <option value="US">UNITED STATES</option>
@@ -752,7 +769,7 @@
           <option value="HU">HUNGARY</option>
         </select>
         <select id="radio-filter-codec">
-          <option value="">VŠETKY KODEKY</option>
+          <option value="" data-sk="VŠETKY KODEKY" data-en="ALL CODECS">VŠETKY KODEKY</option>
           <option value="MP3">MP3</option>
           <option value="AAC">AAC</option>
           <option value="AAC+">AAC+</option>
@@ -760,13 +777,17 @@
         </select>
       </div>
       <div class="results-retro" id="radio-results"></div>
-      <button class="stop-btn-retro" id="stop-btn" onclick="stopRadio()">■ ZASTAVIŤ PREHRÁVANIE</button>
+      <button class="stop-btn-retro" id="stop-btn" onclick="stopRadio()" data-sk="■ ZASTAVIŤ PREHRÁVANIE" data-en="■ STOP PLAYBACK">■ ZASTAVIŤ PREHRÁVANIE</button>
     </div>
 
     <!-- Bottom decoration -->
     <div class="bottom-strip">
-      <span class="model-num">SR-11 · © 2026 Marek Bujko · MIT License<span class="theme-dot" id="theme-dot"></span></span>
-      <div class="vu-meter" id="vu-meter" onclick="cycleTheme()" title="Zmeniť tému" style="cursor:pointer;">
+      <div class="lang-switcher">
+        <button class="lang-btn active" id="btn-sk" onclick="setLang('sk')">SK</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+      <span class="model-num">© 2026 Marek Bujko · MIT License<span class="theme-dot" id="theme-dot"></span></span>
+      <div class="vu-meter" id="vu-meter" onclick="cycleTheme()" data-title-sk="Zmeniť tému" data-title-en="Change theme" style="cursor:pointer;">
         <div class="vu-bar" style="height:4px;--vd:0.35s;--vdelay:0s;--vmin:3px;--vmax:10px"></div>
         <div class="vu-bar" style="height:6px;--vd:0.45s;--vdelay:0.05s;--vmin:4px;--vmax:13px"></div>
         <div class="vu-bar" style="height:8px;--vd:0.55s;--vdelay:0.1s;--vmin:5px;--vmax:14px"></div>
@@ -782,13 +803,13 @@
   <!-- ═══ STATS PANEL ═══ -->
   <div class="stats-panel" id="stats-panel">
     <div class="sp-header">
-      <span>DIAGNOSTIKA</span>
+      <span data-sk="DIAGNOSTIKA" data-en="DIAGNOSTICS">DIAGNOSTIKA</span>
       <button class="sp-close" onclick="toggleStatsPanel()">✕</button>
     </div>
 
     <!-- Session info -->
     <div class="sp-section">
-      <div class="sp-section-title">▸ RELÁCIA</div>
+      <div class="sp-section-title" data-sk="▸ RELÁCIA" data-en="▸ SESSION">▸ RELÁCIA</div>
       <div class="sp-row">
         <span class="sp-label">STATUS</span>
         <span class="sp-val" id="sp-status">IDLE</span>
@@ -801,13 +822,13 @@
 
     <!-- Current station -->
     <div class="sp-section">
-      <div class="sp-section-title">▸ STANICA</div>
+      <div class="sp-section-title" data-sk="▸ STANICA" data-en="▸ STATION">▸ STANICA</div>
       <div class="sp-row">
-        <span class="sp-label">MENO</span>
+        <span class="sp-label" data-sk="MENO" data-en="NAME">MENO</span>
         <span class="sp-val" id="sp-name" style="max-width:160px">—</span>
       </div>
       <div class="sp-row">
-        <span class="sp-label">KRAJINA</span>
+        <span class="sp-label" data-sk="KRAJINA" data-en="COUNTRY">KRAJINA</span>
         <span class="sp-val amber" id="sp-country">—</span>
       </div>
       <div class="sp-row">
@@ -819,7 +840,7 @@
         <span class="sp-val amber" id="sp-bitrate">—</span>
       </div>
       <div class="sp-row">
-        <span class="sp-label">JAZYK</span>
+        <span class="sp-label" data-sk="JAZYK" data-en="LANGUAGE">JAZYK</span>
         <span class="sp-val dim" id="sp-language">—</span>
       </div>
       <div class="sp-row">
@@ -830,9 +851,9 @@
 
     <!-- Signal / quality -->
     <div class="sp-section">
-      <div class="sp-section-title">▸ SIGNÁL</div>
+      <div class="sp-section-title" data-sk="▸ SIGNÁL" data-en="▸ SIGNAL">▸ SIGNÁL</div>
       <div class="sp-row">
-        <span class="sp-label">SILA</span>
+        <span class="sp-label" data-sk="SILA" data-en="STRENGTH">SILA</span>
         <div class="signal-bar-wrap" id="sp-signal-bars">
           <div class="signal-bar" style="height:4px"></div>
           <div class="signal-bar" style="height:6px"></div>
@@ -842,7 +863,7 @@
         </div>
       </div>
       <div class="sp-row">
-        <span class="sp-label">KVALITA</span>
+        <span class="sp-label" data-sk="KVALITA" data-en="QUALITY">KVALITA</span>
         <span class="sp-val" id="sp-quality-label">—</span>
       </div>
       <div class="quality-meter">
@@ -871,21 +892,21 @@
 
     <!-- Session counters -->
     <div class="sp-section">
-      <div class="sp-section-title">▸ ŠTATISTIKY RELÁCIE</div>
+      <div class="sp-section-title" data-sk="▸ ŠTATISTIKY RELÁCIE" data-en="▸ SESSION STATS">▸ ŠTATISTIKY RELÁCIE</div>
       <div class="sp-row">
-        <span class="sp-label">STANÍC POČUTÝCH</span>
+        <span class="sp-label" data-sk="STANÍC POČUTÝCH" data-en="STATIONS PLAYED">STANÍC POČUTÝCH</span>
         <span class="sp-val amber" id="sp-played-count">0</span>
       </div>
       <div class="sp-row">
-        <span class="sp-label">OBĽÚBENÉ</span>
+        <span class="sp-label" data-sk="OBĽÚBENÉ" data-en="FAVOURITES">OBĽÚBENÉ</span>
         <span class="sp-val amber" id="sp-fav-count">0</span>
       </div>
       <div class="sp-row">
-        <span class="sp-label">ČAS RELÁCIE</span>
+        <span class="sp-label" data-sk="ČAS RELÁCIE" data-en="SESSION TIME">ČAS RELÁCIE</span>
         <span class="sp-val dim" id="sp-session-time">0:00</span>
       </div>
       <div class="sp-row">
-        <span class="sp-label">HLASITOSŤ</span>
+        <span class="sp-label" data-sk="HLASITOSŤ" data-en="VOLUME">HLASITOSŤ</span>
         <span class="sp-val" id="sp-volume">100%</span>
       </div>
     </div>
@@ -897,9 +918,9 @@
 
 <!-- Favourites popup -->
 <div id="fav-popup">
-  <div class="fav-title-retro">★ OBĽÚBENÉ STANICE</div>
+  <div class="fav-title-retro" data-sk="★ OBĽÚBENÉ STANICE" data-en="★ FAVOURITE STATIONS">★ OBĽÚBENÉ STANICE</div>
   <div id="fav-list"></div>
-  <div class="fav-empty-retro" id="fav-empty" style="display:none">[ ŽIADNE OBĽÚBENÉ ]</div>
+  <div class="fav-empty-retro" id="fav-empty" style="display:none" data-sk="[ ŽIADNE OBĽÚBENÉ ]" data-en="[ NO FAVOURITES ]">[ ŽIADNE OBĽÚBENÉ ]</div>
 </div>
 
 <audio id="audio-player"></audio>
@@ -1202,6 +1223,7 @@
 let isPlaying = false;
 let currentStation = null;
 let playtimeInterval = null;
+var LANG = 'sk';
 let playStart = null;
 let sessionStart = Date.now();
 let playedCount = 0;
@@ -1303,7 +1325,9 @@ function updateSignalBars(station) {
   // Quality bar
   const qPct = level * 20;
   document.getElementById('sp-quality-bar').style.width = qPct + '%';
-  const qLabels = ['', 'SLABÝ', 'NÍZKY', 'DOBRÝ', 'VÝBORNÝ', 'PREMIUM'];
+  const qLabels = LANG==='en'
+    ? ['', 'WEAK', 'LOW', 'GOOD', 'EXCELLENT', 'PREMIUM']
+    : ['', 'SLABÝ', 'NÍZKY', 'DOBRÝ', 'VÝBORNÝ', 'PREMIUM'];
   document.getElementById('sp-quality-label').innerText = qLabels[level] || '—';
 }
 
@@ -1330,17 +1354,30 @@ function updateStatsPanel(station) {
 }
 
 /* ── STATS PANEL TOGGLE ── */
+function positionStatsPanel() {
+  const cabinet = document.querySelector('.radio-cabinet');
+  const panel = document.getElementById('stats-panel');
+  if (!cabinet || !panel) return;
+  const rect = cabinet.getBoundingClientRect();
+  panel.style.top = rect.top + 'px';
+  panel.style.left = rect.right + 'px';
+  panel.style.height = rect.height + 'px';
+}
+
 function toggleStatsPanel() {
   statsPanelOpen = !statsPanelOpen;
   const panel = document.getElementById('stats-panel');
   const btn = document.getElementById('stats-toggle-btn');
-  panel.classList.toggle('open', statsPanelOpen);
-  btn.classList.toggle('active', statsPanelOpen);
   if (statsPanelOpen) {
+    positionStatsPanel();
     document.getElementById('sp-fav-count').innerText = loadFavs().length;
     document.getElementById('sp-played-count').innerText = playedCount;
   }
+  panel.classList.toggle('open', statsPanelOpen);
+  btn.classList.toggle('active', statsPanelOpen);
 }
+
+window.addEventListener('resize', () => { if (statsPanelOpen) positionStatsPanel(); });
 
 /* ── PLAY/STOP ── */
 function togglePlay() {
@@ -1356,7 +1393,7 @@ function stopRadio() {
   isPlaying = false; currentStation = null;
   setPlayingState(false);
   stopNowPlaying(true);
-  document.getElementById('station-name').innerText = '[ VYBER STANICU ]';
+  document.getElementById('station-name').innerText = LANG==='en' ? '[ SELECT STATION ]' : '[ VYBER STANICU ]';
   document.getElementById('station-meta').innerText = '— · —';
   document.getElementById('fav-ctrl-btn').innerText = '☆';
   document.getElementById('sp-uptime').innerText = '00:00:00';
@@ -1379,7 +1416,7 @@ function playStation(s) {
   const br = s.bitrate && s.bitrate > 0 ? s.bitrate + ' KBPS' : '';
   const cc = (s.countrycode || '').toUpperCase();
   document.getElementById('station-meta').innerText = [codec, br, cc].filter(Boolean).join(' · ') || '—';
-  document.getElementById('now-playing').innerText = '♪ NAČÍTAVANIE...';
+  document.getElementById('now-playing').innerText = LANG==='en' ? '♪ LOADING...' : '♪ NAČÍTAVANIE...';
   document.getElementById('fav-ctrl-btn').innerText = isFavourite(s.stationuuid || s.uuid) ? '★' : '☆';
 
   updateStatsPanel(s);
@@ -1397,7 +1434,7 @@ function playStation(s) {
     }
   }).catch(e => {
     if (e.name === 'NotAllowedError') {
-      document.getElementById('now-playing').innerText = '[ KLIKNI PRE PREHRANIE ]';
+      document.getElementById('now-playing').innerText = LANG==='en' ? '[ CLICK TO PLAY ]' : '[ KLIKNI PRE PREHRANIE ]';
     }
   });
 
@@ -1490,7 +1527,7 @@ async function searchRadio() {
   if (!q) return;
   const res = document.getElementById('radio-results');
   res.style.display = 'block';
-  res.innerHTML = '<div style="padding:8px;color:rgba(74,255,138,0.4);font-size:0.9rem">HĽADÁM STANICE...</div>';
+  res.innerHTML = `<div style="padding:8px;color:rgba(74,255,138,0.4);font-size:0.9rem">${LANG==='en'?'SEARCHING STATIONS...':'HĽADÁM STANICE...'}</div>`;
   const country = document.getElementById('radio-filter-country').value;
   const codec = document.getElementById('radio-filter-codec').value;
   let url = `https://de1.api.radio-browser.info/json/stations/search?limit=40&hidebroken=true&name=${encodeURIComponent(q)}`;
@@ -1499,7 +1536,7 @@ async function searchRadio() {
   try {
     const data = await fetch(url).then(r => r.json());
     res.innerHTML = '';
-    if (!data.length) { res.innerHTML = '<div style="padding:8px;color:rgba(74,255,138,0.3);font-size:0.9rem">[ ŽIADNE VÝSLEDKY ]</div>'; return; }
+    if (!data.length) { res.innerHTML = `<div style="padding:8px;color:rgba(74,255,138,0.3);font-size:0.9rem">${LANG==='en'?'[ NO RESULTS ]':'[ ŽIADNE VÝSLEDKY ]'}</div>`; return; }
     tuneIndex = -1;
     data.slice(0, 40).forEach(s => {
       const d = document.createElement('div');
@@ -1514,7 +1551,7 @@ async function searchRadio() {
       res.appendChild(d);
     });
   } catch(e) {
-    res.innerHTML = '<div style="padding:8px;color:#f55;font-size:0.9rem">[ CHYBA SPOJENIA ]</div>';
+    res.innerHTML = `<div style="padding:8px;color:#f55;font-size:0.9rem">${LANG==='en'?'[ CONNECTION ERROR ]':'[ CHYBA SPOJENIA ]'}</div>`;
   }
 }
 
@@ -1748,7 +1785,44 @@ function cycleTheme() {
 </script>
 
 <script>
-// ── Console easter egg ───────────────────────────────────────────────────────
+// ── i18n engine ──────────────────────────────────────────────────────────────
+function setLang(lang) {
+  LANG = lang;
+  document.getElementById('root').lang = lang;
+  // Buttons
+  var bsk = document.getElementById('btn-sk');
+  var ben = document.getElementById('btn-en');
+  if(bsk){ bsk.className = 'lang-btn' + (lang==='sk'?' active':''); }
+  if(ben){ ben.className = 'lang-btn' + (lang==='en'?' active':''); }
+  // All elements with data-sk / data-en
+  document.querySelectorAll('[data-sk][data-en]').forEach(function(el){
+    var val = el.getAttribute('data-'+lang);
+    if(!val) return;
+    if(el.tagName==='OPTION'){ el.textContent = val; return; }
+    el.innerHTML = val;
+  });
+  // Placeholder
+  document.querySelectorAll('[data-placeholder-sk][data-placeholder-en]').forEach(function(el){
+    el.placeholder = el.getAttribute('data-placeholder-'+lang) || el.placeholder;
+  });
+  // Title attributes
+  document.querySelectorAll('[data-title-sk][data-title-en]').forEach(function(el){
+    el.title = el.getAttribute('data-title-'+lang) || el.title;
+  });
+  // Idle station label (only if not playing)
+  var sn = document.getElementById('station-name');
+  if(sn && sn.getAttribute('data-idle-sk')){
+    var ap = document.getElementById('audio-player');
+    if(!ap || !ap._stationObj){
+      sn.innerText = sn.getAttribute('data-idle-'+lang) || sn.innerText;
+    }
+  }
+  // now-playing title tooltip
+  var np = document.getElementById('now-playing');
+  if(np) np.title = np.getAttribute('data-title-'+lang) || '';
+}
+
+
 (function(){
   const B = 'background:#000;color:#ff6b35;font-family:monospace;font-size:13px;font-weight:bold;padding:2px 0;';
   const w = 'background:#000;color:#ffffff;font-family:monospace;font-size:12px;padding:2px 0;';
