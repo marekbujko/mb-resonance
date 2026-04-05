@@ -391,12 +391,18 @@
     background: linear-gradient(90deg, var(--amber) var(--vol-pct, 100%), #1a1005 var(--vol-pct, 100%));
     outline: none; cursor: pointer; border: 1px solid #2a1a08;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+    touch-action: manipulation;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 5px; border-radius: 3px;
+    background: transparent;
   }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px; height: 16px; border-radius: 50%;
+    width: 28px; height: 28px; border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, var(--chrome-bright), var(--chrome));
     border: 2px solid #1a1005; box-shadow: 0 2px 6px rgba(0,0,0,0.6); cursor: pointer;
+    margin-top: -11px;
   }
   .vol-pct { font-family: 'VT323', monospace; font-size: 0.9rem; color: var(--amber); min-width: 36px; text-align: right; }
 
@@ -451,9 +457,13 @@
   }
   select option { background: var(--lcd-bg); color: var(--lcd-green); }
   .results-retro {
-    max-height: 150px; overflow-y: auto; scrollbar-width: thin;
-    scrollbar-color: #2a1508 transparent; margin-top: 8px; display: none;
+    max-height: 0; overflow-y: auto; scrollbar-width: thin;
+    scrollbar-color: #2a1508 transparent; margin-top: 0;
     font-family: 'VT323', monospace;
+    transition: max-height 0.2s ease;
+  }
+  .results-retro.open {
+    max-height: 150px; margin-top: 8px;
   }
   .result-item-retro {
     display: flex; align-items: center; gap: 8px; padding: 6px 8px;
@@ -468,7 +478,11 @@
     width: 100%; background: linear-gradient(180deg, #2a0808, #1a0404); border: 1px solid #4a1010;
     border-radius: 4px; padding: 8px; color: #ff5555; font-family: 'VT323', monospace;
     font-size: 1rem; letter-spacing: 0.15em; cursor: pointer; margin-top: 8px;
-    transition: 0.15s; display: none; text-transform: uppercase;
+    transition: 0.15s; text-transform: uppercase;
+    visibility: hidden; max-height: 0; overflow: hidden; margin-top: 0; padding: 0; border: none;
+  }
+  .stop-btn-retro.visible {
+    visibility: visible; max-height: 60px; margin-top: 8px; padding: 8px; border: 1px solid #4a1010;
   }
   .stop-btn-retro:hover { background: linear-gradient(180deg, #3a1010, #280808); }
 
@@ -1306,6 +1320,24 @@ function setVolume(v) {
   document.getElementById('sp-volume').innerText = pct + '%';
 }
 
+/* iOS Safari fix — range input fires 'input' unreliably on touch, use change + touchmove */
+(function() {
+  function attachSliderFix() {
+    var sl = document.getElementById('volume-slider');
+    if (!sl) return;
+    sl.addEventListener('change', function() { setVolume(this.value); });
+    sl.addEventListener('touchmove', function(e) {
+      e.stopPropagation();
+      setVolume(this.value);
+    }, { passive: true });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachSliderFix);
+  } else {
+    attachSliderFix();
+  }
+})();
+
 function rotateVolKnob() {
   const knob = document.getElementById('vol-knob');
   const vs = document.getElementById('volume-slider');
@@ -1331,7 +1363,7 @@ function setPlayingState(playing) {
     if (window.grilleSetPlaying) window.grilleSetPlaying(true);
     btn.innerHTML = '⏸';
     onAir.classList.add('active');
-    stopBtn.style.display = 'block';
+    stopBtn.classList.add('visible');
     spWave.classList.add('playing');
     document.getElementById('sp-status').innerText = 'PLAYING';
     document.getElementById('sp-status').className = 'sp-val';
@@ -1354,7 +1386,7 @@ function setPlayingState(playing) {
     if (window.grilleSetPlaying) window.grilleSetPlaying(false);
     btn.innerHTML = '▶';
     onAir.classList.remove('active');
-    stopBtn.style.display = 'none';
+    stopBtn.classList.remove('visible');
     spWave.classList.remove('playing');
     document.getElementById('sp-status').innerText = 'IDLE';
     document.getElementById('sp-status').className = 'sp-val dim';
@@ -1581,7 +1613,7 @@ async function searchRadio() {
   const q = document.getElementById('radio-search').value.trim();
   if (!q) return;
   const res = document.getElementById('radio-results');
-  res.style.display = 'block';
+  res.classList.add('open');
   res.innerHTML = `<div style="padding:8px;color:rgba(74,255,138,0.4);font-size:0.9rem">${LANG==='en'?'SEARCHING STATIONS...':'HĽADÁM STANICE...'}</div>`;
   const country = document.getElementById('radio-filter-country').value;
   const codec = document.getElementById('radio-filter-codec').value;
