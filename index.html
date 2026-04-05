@@ -49,7 +49,7 @@
     --search-border: #1a3a20;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow-x: hidden; }
+  html, body { height: 100%; overflow-x: hidden; max-width: 100%; }
 
   /* ── ANIMATED BACKGROUND ─────────────────────────────────── */
   body {
@@ -142,6 +142,7 @@
     text-align: center;
     margin-bottom: 16px;
     position: relative;
+    overflow: hidden;
   }
   .brand-name {
     font-family: 'Bebas Neue', sans-serif;
@@ -427,7 +428,7 @@
     opacity: 0.8;
   }
   .search-title::before, .search-title::after { content: ''; flex: 1; height: 1px; background: var(--amber); opacity: 0.2; }
-  .search-row-retro { display: flex; gap: 6px; margin-bottom: 8px; }
+  .search-row-retro { display: flex; gap: 6px; margin-bottom: 8px; min-width: 0; }
   .search-input-retro {
     flex: 1; background: var(--lcd-bg); border: 1px solid var(--search-border); border-radius: 4px;
     padding: 7px 10px; color: var(--lcd-green); font-family: 'VT323', monospace;
@@ -448,12 +449,12 @@
     border-radius: 4px; padding: 7px 10px; color: #554; font-size: 1rem; cursor: pointer; transition: 0.15s;
   }
   .fav-btn-retro.active { color: #ffc020; border-color: #5a4010; }
-  .filters-retro { display: flex; gap: 6px; }
+  .filters-retro { display: flex; gap: 6px; min-width: 0; }
   select {
-    flex: 1; background: var(--lcd-bg); border: 1px solid var(--search-border); border-radius: 4px;
+    flex: 1; min-width: 0; background: var(--lcd-bg); border: 1px solid var(--search-border); border-radius: 4px;
     padding: 5px 8px; color: var(--lcd-green); font-family: 'VT323', monospace;
     font-size: 16px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
-    opacity: 0.8;
+    opacity: 0.8; overflow: hidden; text-overflow: ellipsis;
   }
   select option { background: var(--lcd-bg); color: var(--lcd-green); }
   .results-retro {
@@ -669,7 +670,17 @@
   .fav-del-retro:hover { color: #f55; }
   .fav-empty-retro { font-family: 'VT323', monospace; font-size: 0.85rem; color: var(--lcd-green); opacity: 0.35; }
 
-  audio { display: none; }
+  /* ── iOS volume notice ── */
+  .ios-vol-notice {
+    display: none;
+    font-family: 'VT323', monospace;
+    font-size: 0.8rem;
+    color: var(--chrome);
+    opacity: 0.5;
+    text-align: center;
+    letter-spacing: 0.08em;
+    padding: 4px 0 10px;
+  }
 
   /* ── THEME INDICATOR ── */
   .theme-dot {
@@ -709,41 +720,59 @@
 
   /* ── MOBILE / iPHONE ─────────────────────────────────────── */
   @media (max-width: 480px) {
-    body { padding: 10px 8px; align-items: flex-start; justify-content: center; }
+    html, body {
+      overflow: hidden;
+      width: 100%;
+      height: auto;
+      min-height: 100%;
+    }
 
-    .page-wrapper { width: 100%; justify-content: center; }
+    body {
+      padding: 8px;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100svh;
+    }
+
+    .page-wrapper {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
 
     .radio-cabinet {
       width: 100%;
       max-width: 100%;
-      padding: 14px 12px 18px;
+      padding: 12px 10px 16px;
       border-radius: 14px 14px 18px 18px;
+      overflow: hidden;
     }
 
-    /* Speaker grille shorter on mobile */
-    #cw, .speaker-grille { height: 56px !important; }
+    /* Speaker grille shorter */
+    .speaker-grille { height: 50px !important; }
 
     /* Knobs smaller */
-    .knob { width: 40px !important; height: 40px !important; }
-    .controls-section { gap: 8px !important; }
-    .play-btn-retro { width: 50px !important; height: 50px !important; font-size: 1rem !important; }
-    .aux-btn { padding: 4px 8px !important; font-size: 0.8rem !important; }
+    .knob { width: 38px !important; height: 38px !important; }
+    .controls-section { gap: 6px !important; }
+    .play-btn-retro { width: 48px !important; height: 48px !important; font-size: 1rem !important; }
+    .aux-btn { padding: 4px 7px !important; font-size: 0.78rem !important; }
 
     /* LCD smaller */
-    .lcd-station { font-size: 1rem !important; }
-    .lcd-track { font-size: 0.78rem !important; }
+    .lcd-station { font-size: 0.95rem !important; }
+    .lcd-track { font-size: 0.75rem !important; }
+    .freq-display { padding: 7px 10px !important; }
 
     /* Search — font-size MUST stay 16px to prevent iOS auto-zoom */
     .search-input-retro { font-size: 16px !important; padding: 6px 8px !important; }
-    .search-btn-retro { padding: 6px 10px !important; font-size: 16px !important; }
+    .search-btn-retro { padding: 6px 8px !important; font-size: 16px !important; }
     .filters-retro { gap: 4px !important; }
-    .filters-retro select { font-size: 16px !important; padding: 5px 4px !important; }
-    .result-item-retro { font-size: 0.82rem !important; padding: 7px 8px !important; }
-    .stop-btn-retro { font-size: 0.9rem !important; padding: 8px !important; }
+    .filters-retro select { font-size: 16px !important; padding: 4px 3px !important; }
+    .result-item-retro { font-size: 0.8rem !important; padding: 6px 8px !important; }
+    .stop-btn-retro { font-size: 0.85rem !important; padding: 7px !important; }
 
     /* Stats panel — full width overlay on mobile */
     .stats-panel {
-      width: 85vw !important;
+      width: 88vw !important;
       left: auto !important;
       right: 0 !important;
       top: 0 !important;
@@ -753,8 +782,9 @@
     }
 
     /* Bottom strip */
-    .model-num { font-size: 0.62rem !important; }
+    .model-num { font-size: 0.6rem !important; }
     .lang-btn { font-size: 11px !important; padding: 1px 5px !important; }
+    .bottom-strip { margin-top: 10px !important; }
   }
 </style>
 </head>
@@ -811,11 +841,12 @@
     </div>
 
     <!-- Volume slider -->
-    <div class="vol-section">
+    <div class="vol-section" id="vol-section">
       <span class="vol-label-retro">🔊 VOL</span>
       <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" style="--vol-pct:100%" oninput="setVolume(this.value)">
       <span class="vol-pct" id="vol-label">100%</span>
     </div>
+    <div class="ios-vol-notice" id="ios-vol-notice" data-sk="🔊 Hlasitosť ovládaj tlačidlami na iPhone" data-en="🔊 Use iPhone volume buttons to adjust">🔊 Hlasitosť ovládaj tlačidlami na iPhone</div>
 
     <!-- Search section -->
     <div class="search-section">
@@ -1320,7 +1351,22 @@ function setVolume(v) {
   document.getElementById('sp-volume').innerText = pct + '%';
 }
 
-/* iOS Safari fix — range input fires 'input' unreliably on touch, use change + touchmove */
+/* ── iOS volume controls — Apple does not allow JS volume control ── */
+(function() {
+  var isIOS = /iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!isIOS) return;
+  // Hide slider + vol knob group, show notice
+  document.addEventListener('DOMContentLoaded', function() {
+    var vs = document.getElementById('vol-section');
+    var vk = document.getElementById('vol-knob');
+    var vkg = vk && vk.closest('.knob-group');
+    var notice = document.getElementById('ios-vol-notice');
+    if (vs) vs.style.display = 'none';
+    if (vkg) vkg.style.visibility = 'hidden';
+    if (notice) notice.style.display = 'block';
+  });
+})();
 (function() {
   function attachSliderFix() {
     var sl = document.getElementById('volume-slider');
