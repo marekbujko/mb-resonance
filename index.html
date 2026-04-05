@@ -79,7 +79,7 @@
     position: fixed;
     inset: 0;
     z-index: 0;
-    opacity: 0.85;
+    opacity: 1;
   }
 
   /* Vignette */
@@ -87,7 +87,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.75) 100%);
+    background: radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.88) 100%);
     pointer-events: none;
     z-index: 1;
     width: auto;
@@ -921,14 +921,14 @@
   resize();
 
   // Particles: slow-drifting embers / dust
-  const PARTICLE_COUNT = 60;
+  const PARTICLE_COUNT = 120;
   const particles = Array.from({length: PARTICLE_COUNT}, () => ({
     x: Math.random() * 1,
     y: Math.random() * 1,
-    vx: (Math.random() - 0.5) * 0.00015,
-    vy: -(Math.random() * 0.0002 + 0.00005),
-    r: Math.random() * 1.8 + 0.4,
-    alpha: Math.random() * 0.35 + 0.05,
+    vx: (Math.random() - 0.5) * 0.00020,
+    vy: -(Math.random() * 0.0003 + 0.00008),
+    r: Math.random() * 2.5 + 0.5,
+    alpha: Math.random() * 0.55 + 0.1,
     hue: (window._themeParticleHue ? window._themeParticleHue[0] : 20) + Math.random() * (window._themeParticleHue ? window._themeParticleHue[1] : 30), // theme-aware
     life: Math.random(),
     decay: Math.random() * 0.0008 + 0.0003,
@@ -937,10 +937,10 @@
   function resetParticle(p) {
     p.x = Math.random();
     p.y = 1 + Math.random() * 0.1;
-    p.vx = (Math.random() - 0.5) * 0.00012;
-    p.vy = -(Math.random() * 0.00018 + 0.00004);
-    p.r = Math.random() * 1.8 + 0.4;
-    p.alpha = Math.random() * 0.3 + 0.05;
+    p.vx = (Math.random() - 0.5) * 0.00016;
+    p.vy = -(Math.random() * 0.00025 + 0.00006);
+    p.r = Math.random() * 2.5 + 0.5;
+    p.alpha = Math.random() * 0.5 + 0.1;
     const ph = window._themeParticleHue || [20,30]; p.hue = ph[0] + Math.random() * ph[1];
     p.life = 1;
     p.decay = Math.random() * 0.0008 + 0.0003;
@@ -948,11 +948,12 @@
 
   // Slow undulating heat-wave blobs
   const blobs = [
-    { x: 0.2, y: 0.5, r: 0.35, t: 0, speed: 0.0005 },
-    { x: 0.75, y: 0.4, r: 0.28, t: 2, speed: 0.0007 },
-    { x: 0.5, y: 0.8, r: 0.3, t: 4, speed: 0.0004 },
-    { x: 0.85, y: 0.75, r: 0.22, t: 1, speed: 0.0006 },
-    { x: 0.1, y: 0.2, r: 0.25, t: 3, speed: 0.0005 },
+    { x: 0.2,  y: 0.5,  r: 0.45, t: 0, speed: 0.0005 },
+    { x: 0.75, y: 0.4,  r: 0.38, t: 2, speed: 0.0007 },
+    { x: 0.5,  y: 0.8,  r: 0.40, t: 4, speed: 0.0004 },
+    { x: 0.85, y: 0.75, r: 0.32, t: 1, speed: 0.0006 },
+    { x: 0.1,  y: 0.2,  r: 0.35, t: 3, speed: 0.0005 },
+    { x: 0.5,  y: 0.3,  r: 0.30, t: 5, speed: 0.0008 },
   ];
 
   let frame = 0;
@@ -971,8 +972,8 @@
       const br = b.r * Math.min(W, H);
       const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br);
       const bc = (window._themeBlobColor || '120,50,5');
-      grad.addColorStop(0, `rgba(${bc},0.18)`);
-      grad.addColorStop(0.5, `rgba(${bc},0.08)`);
+      grad.addColorStop(0, `rgba(${bc},0.32)`);
+      grad.addColorStop(0.5, `rgba(${bc},0.15)`);
       grad.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad;
       ctx.beginPath();
@@ -1744,6 +1745,35 @@ function cycleTheme() {
   applyTheme(t0);
   document.body.setAttribute('data-theme', t0.name.toLowerCase());
 })();
+</script>
+
+<script>
+// ── Console easter egg ───────────────────────────────────────────────────────
+(function(){
+  const B = 'background:#000;color:#ff6b35;font-family:monospace;font-size:13px;font-weight:bold;padding:2px 0;';
+  const w = 'background:#000;color:#ffffff;font-family:monospace;font-size:12px;padding:2px 0;';
+  const d = 'background:#000;color:#556688;font-family:monospace;font-size:11px;padding:2px 0;';
+  console.log('%c ██████╗ ███████╗███████╗ ██████╗ ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗███████╗',B);
+  console.log('%c ██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║██╔══██╗████╗  ██║██╔════╝██╔════╝%c  by Marek Bujko  © 2026',B,w);
+  console.log('%c ██████╔╝█████╗  ███████╗██║   ██║██╔██╗ ██║███████║██╔██╗ ██║██║     █████╗  %c  MIT License',B,w);
+  console.log('%c ██╔══██╗██╔══╝  ╚════██║██║   ██║██║╚██╗██║██╔══██║██║╚██╗██║██║     ██╔══╝  %c  Online Radio · v1.0',B,w);
+  console.log('%c ██║  ██║███████╗███████║╚██████╔╝██║ ╚████║██║  ██║██║ ╚████║╚██████╗███████╗%c  Single-file · No deps',B,d);
+  console.log('%c ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝%c',B,d);
+  console.log('%c ',d);
+  console.log('%c 🎵 Hey, you found the console!',w);
+  console.log('%c Good taste in music AND code.',w);
+  console.log('%c ',d);
+  console.log('%c More projects at:',w);
+  console.log('%chttps://github.com/marekbujko',w);
+  console.log('%c ',d);
+})();
+
+/* Suppress console output in production — banner above runs first, so it still shows */
+console.log   = () => {};
+console.warn  = () => {};
+console.error = () => {};
+console.info  = () => {};
+console.debug = () => {};
 </script>
 </body>
 </html>
