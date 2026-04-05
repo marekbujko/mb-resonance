@@ -1,4 +1,4 @@
-# Online Radio - Resonance SK
+# Online Radio - Resonance
 
 Online Radio code based on the Web UI from RGB Binary Clock.
 
