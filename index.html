@@ -695,34 +695,37 @@
 
   /* ── MOBILE / iPHONE ─────────────────────────────────────── */
   @media (max-width: 480px) {
-    body { padding: 12px 10px; align-items: flex-start; }
+    body { padding: 10px 8px; align-items: flex-start; justify-content: center; }
+
+    .page-wrapper { width: 100%; justify-content: center; }
 
     .radio-cabinet {
+      width: 100%;
       max-width: 100%;
-      padding: 16px 14px 20px;
+      padding: 14px 12px 18px;
       border-radius: 14px 14px 18px 18px;
     }
 
     /* Speaker grille shorter on mobile */
-    #cw, .speaker-grille { height: 120px !important; }
+    #cw, .speaker-grille { height: 56px !important; }
 
     /* Knobs smaller */
-    .knob { width: 44px !important; height: 44px !important; }
-    .controls-section { gap: 10px !important; }
-    .play-btn-retro { width: 54px !important; height: 54px !important; font-size: 1.1rem !important; }
-    .aux-btn { padding: 5px 9px !important; font-size: 0.82rem !important; }
+    .knob { width: 40px !important; height: 40px !important; }
+    .controls-section { gap: 8px !important; }
+    .play-btn-retro { width: 50px !important; height: 50px !important; font-size: 1rem !important; }
+    .aux-btn { padding: 4px 8px !important; font-size: 0.8rem !important; }
 
     /* LCD smaller */
     .lcd-station { font-size: 1rem !important; }
     .lcd-track { font-size: 0.78rem !important; }
 
-    /* Search */
-    .search-input-retro { font-size: 0.9rem !important; padding: 6px 8px !important; }
-    .search-btn-retro { padding: 6px 10px !important; font-size: 0.82rem !important; }
-    .filters-retro { gap: 6px !important; }
-    .filters-retro select { font-size: 0.8rem !important; padding: 5px 6px !important; }
+    /* Search — font-size MUST stay 16px to prevent iOS auto-zoom */
+    .search-input-retro { font-size: 16px !important; padding: 6px 8px !important; }
+    .search-btn-retro { padding: 6px 10px !important; font-size: 16px !important; }
+    .filters-retro { gap: 4px !important; }
+    .filters-retro select { font-size: 16px !important; padding: 5px 4px !important; }
     .result-item-retro { font-size: 0.82rem !important; padding: 7px 8px !important; }
-    .stop-btn-retro { font-size: 0.82rem !important; padding: 8px !important; }
+    .stop-btn-retro { font-size: 0.9rem !important; padding: 8px !important; }
 
     /* Stats panel — full width overlay on mobile */
     .stats-panel {
@@ -1674,43 +1677,7 @@ document.addEventListener('click', e => {
 
 document.addEventListener('DOMContentLoaded', renderFavs);
 
-/* ── iPhone scale fix ── */
-(function() {
-  var ua = navigator.userAgent;
-  var isIOS = /iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  if (!isIOS) return;
 
-  function scaleToFit() {
-    var wrapper = document.querySelector('.page-wrapper');
-    if (!wrapper) return;
-    var cabinet = document.querySelector('.radio-cabinet');
-    if (!cabinet) return;
-
-    // Reset scale first to measure natural size
-    wrapper.style.transform = '';
-    wrapper.style.transformOrigin = 'top center';
-
-    var cabinetW = cabinet.offsetWidth;
-    var screenW  = window.innerWidth;
-    var padding  = 16; // px each side
-    var available = screenW - padding * 2;
-
-    if (cabinetW > available) {
-      var scale = available / cabinetW;
-      wrapper.style.transform = 'scale(' + scale + ')';
-      wrapper.style.transformOrigin = 'top center';
-      // Collapse the extra vertical space that transform leaves behind
-      var cabinetH = cabinet.offsetHeight;
-      var shrunk = cabinetH * scale;
-      wrapper.style.marginBottom = '-' + (cabinetH - shrunk) + 'px';
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', scaleToFit);
-  window.addEventListener('resize', scaleToFit);
-  // Also run after fonts load (VT323 / Bebas Neue can shift layout)
-  document.fonts && document.fonts.ready.then(scaleToFit);
-})();
 
 /* ── TUNING KNOB — cycles through search results ── */
 let tuneIndex = -1;
