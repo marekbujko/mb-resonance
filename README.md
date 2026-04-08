@@ -1,6 +1,7 @@
 # Online Radio - Resonance
 
-Online Radio code based on the Web UI from RGB Binary Clock.
+Online Radio code based on the Web UI from RGB Binary Clock project.
+
 It supports responsive design for iPhone and also works as a web app when shared on iOS and macOS.
 
 <a href="https://marekbujko.github.io/mb-resonance/" rel="nofollow">
