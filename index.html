@@ -811,9 +811,11 @@
   }
   .tracklist-title::before, .tracklist-title::after { content: ''; flex: 1; height: 1px; background: var(--amber); opacity: 0.2; }
   .tracklist-inner {
-    max-height: 220px; overflow-y: auto; scrollbar-width: thin;
+    max-height: 260px; overflow-y: auto; scrollbar-width: thin;
     scrollbar-color: #2a1508 transparent;
     font-family: 'VT323', monospace;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   .track-item {
     display: flex; align-items: center; gap: 8px; padding: 6px 8px;
@@ -833,6 +835,38 @@
     padding: 8px 0; letter-spacing: 0.06em;
   }
   .arc-status-msg.error { color: #ff5555; opacity: 0.9; }
+
+  /* ALBUM FILTER */
+  .album-filter-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .album-filter-input {
+    flex: 1; background: var(--lcd-bg); border: 1px solid var(--search-border); border-radius: 4px;
+    padding: 5px 8px; color: var(--lcd-green); font-family: 'VT323', monospace;
+    font-size: 14px; letter-spacing: 0.04em; outline: none;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+  }
+  .album-filter-input::placeholder { color: var(--lcd-green); filter: opacity(0.3); }
+  .album-filter-select {
+    width: 80px; background: var(--lcd-bg); border: 1px solid var(--search-border); border-radius: 4px;
+    padding: 5px 6px; color: var(--lcd-green); font-family: 'VT323', monospace;
+    font-size: 14px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
+    flex-shrink: 0;
+  }
+  .album-filter-select option { background: var(--lcd-bg); color: var(--lcd-green); }
+  .album-count {
+    font-family: 'VT323', monospace; font-size: 0.72rem; color: var(--lcd-green);
+    opacity: 0.35; text-align: right; margin-bottom: 4px; letter-spacing: 0.06em;
+  }
+  /* Loading spinner for infinite scroll */
+  .arc-load-more {
+    text-align: center; padding: 8px 0;
+    font-family: 'VT323', monospace; font-size: 0.8rem;
+    color: var(--lcd-green); opacity: 0.4; letter-spacing: 0.08em;
+  }
 
   /* PROGRESS BAR */
   .arc-progress-section { margin-bottom: 12px; display: none; }
@@ -861,10 +895,12 @@
   /* ── MOBILE / iPHONE ─────────────────────────────────────── */
   @media (max-width: 480px) {
     html, body {
-      overflow: hidden;
       width: 100%;
       height: auto;
       min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     body {
@@ -877,7 +913,7 @@
     .page-wrapper {
       width: 100%;
       max-width: 100%;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .radio-cabinet {
@@ -885,7 +921,7 @@
       max-width: 100%;
       padding: 12px 10px 16px;
       border-radius: 14px 14px 18px 18px;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     /* Speaker grille shorter */
@@ -1055,8 +1091,11 @@
         <div class="search-title" data-sk="ARCHIVE LINK" data-en="ARCHIVE LINK">ARCHIVE LINK</div>
         <div class="search-row-retro">
           <input type="text" class="search-input-retro" id="arc-input"
-            placeholder="https://archive.org/details/..." autocomplete="off" autocorrect="off" spellcheck="false">
-          <button class="search-btn-retro" id="arc-load-btn" onclick="arcLoad()">LOAD</button>
+            placeholder="https://archive.org/details/..." 
+            data-placeholder-sk="Vložte Archive.org link..."
+            data-placeholder-en="Enter Archive.org link..."
+            autocomplete="off" autocorrect="off" spellcheck="false">
+          <button class="search-btn-retro" id="arc-load-btn" onclick="arcLoad()" data-sk="NAČÍTAJ" data-en="LOAD">NAČÍTAJ</button>
         </div>
         <div class="archive-hint" data-sk="Pr.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Podporuje kolekcie aj albumy" data-en="Ex.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Supports collections and albums">Pr.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Podporuje kolekcie aj albumy</div>
       </div>
@@ -1064,7 +1103,17 @@
       <!-- Album list (shown for collections) -->
       <div class="tracklist-section" id="arc-albumlist-section" style="display:none;">
         <div class="tracklist-title" id="arc-albumlist-title">ALBUMY</div>
+        <div class="album-filter-row">
+          <input type="text" class="album-filter-input" id="arc-album-filter-name"
+            placeholder="FILTER NÁZOV..." 
+            data-placeholder-sk="FILTER NÁZOV..."
+            data-placeholder-en="FILTER NAME..."
+            autocomplete="off"
+            oninput="arcFilterAlbums()">
+        </div>
+        <div class="album-count" id="arc-album-count"></div>
         <div class="tracklist-inner" id="arc-albumlist-inner"></div>
+        <div class="arc-load-more" id="arc-load-more" style="display:none;">▼ NAČÍTAVAM ĎALŠIE...</div>
       </div>
 
       <!-- Tracklist -->
@@ -1706,6 +1755,11 @@ function togglePlay() {
 }
 
 function stopRadio() {
+  // If in archive mode, delegate to arcStop
+  if (typeof currentMode !== 'undefined' && currentMode === 'archive') {
+    arcStop();
+    return;
+  }
   const ap = document.getElementById('audio-player');
   ap.pause(); ap.removeAttribute('src'); ap.load();
   isPlaying = false; currentStation = null;
@@ -2145,6 +2199,16 @@ function setLang(lang) {
   // now-playing title tooltip
   var np = document.getElementById('now-playing');
   if(np) np.title = np.getAttribute('data-title-'+lang) || '';
+
+  // Archive Player LCD idle text (only if in archive mode and not playing)
+  if (typeof currentMode !== 'undefined' && currentMode === 'archive') {
+    var ap2 = document.getElementById('audio-player');
+    var isArchivePlaying = ap2 && !ap2.paused && ap2.src;
+    if (!isArchivePlaying) {
+      var nowPlEl = document.getElementById('now-playing');
+      if (nowPlEl) nowPlEl.textContent = lang === 'en' ? 'Enter Archive.org link...' : 'Vložte Archive.org link...';
+    }
+  }
 }
 
 
@@ -2202,9 +2266,12 @@ function switchMode(mode) {
     // Reset LCD to radio idle
     const sn = document.getElementById('station-name');
     const ap = document.getElementById('audio-player');
-    if (sn && (!ap || !ap._stationObj)) {
+    // Clear _stationObj since we stopped archive
+    if (ap) ap._stationObj = null;
+    if (sn) {
       sn.innerText = LANG === 'en' ? '[ SELECT STATION ]' : '[ VYBER STANICU ]';
     }
+    document.getElementById('now-playing').innerText = '♪ —';
     document.getElementById('station-meta').innerText = '— · —';
 
   } else {
@@ -2345,7 +2412,7 @@ async function arcLoadItem(id, fromCollection) {
     arcSetLCD(
       albumTitle.toUpperCase().substring(0, 28),
       creator ? `${creator}${year ? ' · ' + year : ''}` : '',
-      `archive.org / ${id} / ${arcTracks.length} ${LANG==='en' ? 'tracks' : 'tráckov'}`
+      `archive.org / ${id} / ${arcTracks.length} ${LANG==='en' ? 'tracks' : 'trackov'}`
     );
 
     // Update tracklist title — add back button if came from collection
@@ -2371,7 +2438,7 @@ async function arcLoadItem(id, fromCollection) {
 }
 
 async function arcLoadCollection(id, meta2) {
-  const loadBtn = document.getElementById('arc-load-btn');
+  const loadBtn    = document.getElementById('arc-load-btn');
   const albumSection = document.getElementById('arc-albumlist-section');
   const albumInner   = document.getElementById('arc-albumlist-inner');
   const albumTitle   = document.getElementById('arc-albumlist-title');
@@ -2384,41 +2451,118 @@ async function arcLoadCollection(id, meta2) {
   albumSection.style.display = 'block';
   document.getElementById('arc-tracklist-section').classList.remove('open');
 
+  // Reset filter state
+  arcAllAlbums = [];
+  arcCollectionPage = 1;
+  arcCollectionHasMore = true;
+  arcCollectionLoadingMore = false;
+  arcCollectionCurrentId = id;
+  document.getElementById('arc-album-filter-name').value = '';
+  document.getElementById('arc-album-count').textContent = '';
+  document.getElementById('arc-load-more').style.display = 'none';
+
   try {
-    // Search archive.org for items in this collection
-    const searchUrl = `https://archive.org/advancedsearch.php?q=collection%3A${encodeURIComponent(id)}+mediatype%3Aaudio&fl[]=identifier,title,creator,year,date&sort[]=date+desc&rows=40&page=1&output=json`;
-    const r = await fetch(searchUrl);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
-    const docs = data?.response?.docs || [];
-
-    if (!docs.length) {
-      albumInner.innerHTML = `<div class="arc-status-msg">${LANG==='en'?'No albums found':'Žiadne albumy nenájdené'}</div>`;
-      return;
-    }
-
-    albumInner.innerHTML = '';
-    docs.forEach(doc => {
-      const el = document.createElement('div');
-      el.className = 'track-item';
-      const creator2 = Array.isArray(doc.creator) ? doc.creator[0] : (doc.creator||'');
-      const year2 = doc.year || doc.date?.substring(0,4) || '';
-      el.innerHTML = `
-        <span class="track-now"></span>
-        <span class="track-name" style="font-size:0.85rem">${doc.title || doc.identifier}</span>
-        <span class="track-dur" style="font-size:0.72rem;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${year2}</span>
-      `;
-      el.onclick = () => {
-        albumSection.style.display = 'none';
-        arcLoadItem(doc.identifier, true);
-      };
-      albumInner.appendChild(el);
-    });
+    await arcFetchCollectionPage(id, 1, true);
   } catch(e) {
     albumInner.innerHTML = `<div class="arc-status-msg error">${LANG==='en'?'Error':'Chyba'}: ${e.message}</div>`;
   } finally {
     loadBtn.disabled = false;
     loadBtn.textContent = 'LOAD';
+  }
+
+  // Setup infinite scroll on album list
+  albumInner.onscroll = function() {
+    if (!arcCollectionHasMore || arcCollectionLoadingMore) return;
+    if (albumInner.scrollTop + albumInner.clientHeight >= albumInner.scrollHeight - 40) {
+      arcFetchCollectionPage(arcCollectionCurrentId, arcCollectionPage, false);
+    }
+  };
+}
+
+// State for paginated collection loading
+let arcAllAlbums = [];
+let arcCollectionPage = 1;
+let arcCollectionHasMore = true;
+let arcCollectionLoadingMore = false;
+let arcCollectionCurrentId = '';
+const ARC_PAGE_SIZE = 40;
+
+async function arcFetchCollectionPage(id, page, isFirst) {
+  if (arcCollectionLoadingMore) return;
+  arcCollectionLoadingMore = true;
+  const loadMore = document.getElementById('arc-load-more');
+  if (!isFirst) loadMore.style.display = 'block';
+
+  try {
+    const searchUrl = `https://archive.org/advancedsearch.php?q=collection%3A${encodeURIComponent(id)}+mediatype%3Aaudio&fl[]=identifier,title,creator,year,date&sort[]=date+desc&rows=${ARC_PAGE_SIZE}&page=${page}&output=json`;
+    const r = await fetch(searchUrl);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    const docs = data?.response?.docs || [];
+    const total = data?.response?.numFound || 0;
+
+    if (isFirst && !docs.length) {
+      document.getElementById('arc-albumlist-inner').innerHTML = `<div class="arc-status-msg">${LANG==='en'?'No albums found':'Žiadne albumy nenájdené'}</div>`;
+      arcCollectionHasMore = false;
+      return;
+    }
+
+    arcAllAlbums = isFirst ? docs : arcAllAlbums.concat(docs);
+    arcCollectionPage = page + 1;
+    arcCollectionHasMore = arcAllAlbums.length < total && docs.length === ARC_PAGE_SIZE;
+
+    arcFilterAlbums();
+  } finally {
+    arcCollectionLoadingMore = false;
+    document.getElementById('arc-load-more').style.display = 'none';
+  }
+}
+
+function arcFilterAlbums() {
+  const nameQ = (document.getElementById('arc-album-filter-name').value || '').toLowerCase().trim();
+  const albumSection = document.getElementById('arc-albumlist-section');
+  const albumInner   = document.getElementById('arc-albumlist-inner');
+
+  let filtered = arcAllAlbums;
+  if (nameQ) filtered = filtered.filter(d => (d.title || d.identifier || '').toLowerCase().includes(nameQ));
+
+  const countEl = document.getElementById('arc-album-count');
+  if (arcAllAlbums.length > 0) {
+    countEl.textContent = filtered.length < arcAllAlbums.length
+      ? `${filtered.length} / ${arcAllAlbums.length}${arcCollectionHasMore ? '+' : ''}`
+      : `${arcAllAlbums.length}${arcCollectionHasMore ? '+' : ''} ${LANG==='en'?'albums':'albumov'}`;
+  }
+
+  // Re-render
+  albumInner.innerHTML = '';
+  if (!filtered.length) {
+    albumInner.innerHTML = `<div class="arc-status-msg">${LANG==='en'?'No matches':'Žiadna zhoda'}</div>`;
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  filtered.forEach(doc => {
+    const el = document.createElement('div');
+    el.className = 'track-item';
+    const creator2 = Array.isArray(doc.creator) ? doc.creator[0] : (doc.creator||'');
+    const year2 = doc.year || doc.date?.substring(0,4) || '';
+    const label = [doc.title || doc.identifier, creator2].filter(Boolean).join(' — ');
+    el.innerHTML = `
+      <span class="track-now"></span>
+      <span class="track-name" style="font-size:0.85rem" title="${escHtml(label)}">${escHtml(doc.title || doc.identifier)}</span>
+      <span class="track-dur" style="font-size:0.72rem;flex-shrink:0;">${escHtml(year2)}</span>
+    `;
+    el.onclick = () => {
+      albumSection.style.display = 'none';
+      arcLoadItem(doc.identifier, true);
+    };
+    frag.appendChild(el);
+  });
+  albumInner.appendChild(frag);
+
+  // If loaded less than one screen and more pages exist, load more
+  if (arcCollectionHasMore && !arcCollectionLoadingMore && albumInner.scrollHeight <= albumInner.clientHeight) {
+    arcFetchCollectionPage(arcCollectionCurrentId, arcCollectionPage, false);
   }
 }
 
@@ -2427,15 +2571,16 @@ function arcShowCollection() {
   // Stop playback
   const ap = document.getElementById('audio-player');
   ap.pause();
-  // Hide tracklist, show album list
+  // Hide tracklist, show album list + re-apply filter
   document.getElementById('arc-tracklist-section').classList.remove('open');
   document.getElementById('arc-albumlist-section').style.display = 'block';
   arcSetLCD(arcCollectionId.toUpperCase(), LANG==='en' ? 'Select an album...' : 'Vyber album...', `archive.org / ${arcCollectionId}`);
+  arcFilterAlbums();
 }
 
 function arcRenderTracklist() {
   const inner = document.getElementById('arc-tracklist-inner');
-  if (!arcTracks.length) { inner.innerHTML = `<div class="arc-status-msg">${LANG==='en' ? 'No tracks' : 'Žiadne trácksy'}</div>`; return; }
+  if (!arcTracks.length) { inner.innerHTML = `<div class="arc-status-msg">${LANG==='en' ? 'No tracks' : 'Žiadne tracky'}</div>`; return; }
   inner.innerHTML = arcTracks.map((t, i) => `
     <div class="track-item${i === arcCurrentTrack ? ' active' : ''}" data-idx="${i}">
       <span class="track-now">${i === arcCurrentTrack ? '▶' : ''}</span>
