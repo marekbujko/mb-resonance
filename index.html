@@ -794,6 +794,11 @@
     font-family: 'VT323', monospace; font-size: 0.75rem; color: var(--lcd-green);
     opacity: 0.3; margin-top: 6px; letter-spacing: 0.04em;
   }
+  .archive-hint .hint-link {
+    text-decoration: underline; cursor: pointer; transition: opacity 0.15s;
+  }
+  .archive-hint:hover { opacity: 0.5; }
+  .archive-hint .hint-link:hover { opacity: 1; color: var(--amber-glow); }
 
   /* TRACKLIST */
   .tracklist-section {
@@ -811,7 +816,7 @@
   }
   .tracklist-title::before, .tracklist-title::after { content: ''; flex: 1; height: 1px; background: var(--amber); opacity: 0.2; }
   .tracklist-inner {
-    max-height: 260px; overflow-y: auto; scrollbar-width: thin;
+    max-height: 140px; overflow-y: auto; scrollbar-width: thin;
     scrollbar-color: #2a1508 transparent;
     font-family: 'VT323', monospace;
     -webkit-overflow-scrolling: touch;
@@ -1063,14 +1068,18 @@
       <!-- Archive controls (PREV / NEXT replace TUNING/VOLUME knobs) -->
       <div class="arc-controls-section visible" id="arc-controls">
         <div class="knob-group">
-          <div class="knob" id="arc-knob-prev" onclick="arcPrevTrack()" title="Predchádzajúca"></div>
+          <div class="knob" id="arc-knob-prev" onclick="arcPrevTrack()" title="Predchádzajúca" data-title-sk="Predchádzajúca" data-title-en="Previous"></div>
           <div class="knob-label">PREV</div>
         </div>
         <div class="play-controls">
-          <button class="play-btn-retro" id="arc-play-btn" onclick="arcTogglePlay()">▶</button>
+          <div class="aux-btns" style="align-items:center;">
+            <button class="aux-btn" id="arc-fav-btn" onclick="handleArcFavBtn()" data-title-sk="Obľúbené" data-title-en="Favourites">☆</button>
+            <button class="play-btn-retro" id="arc-play-btn" onclick="arcTogglePlay()">▶</button>
+            <button class="aux-btn stats-btn" id="arc-stats-btn" onclick="toggleStatsPanel()" data-title-sk="Diagnostika" data-title-en="Diagnostics">▤</button>
+          </div>
         </div>
         <div class="knob-group">
-          <div class="knob" id="arc-knob-next" onclick="arcNextTrack()" title="Nasledujúca"></div>
+          <div class="knob" id="arc-knob-next" onclick="arcNextTrack()" title="Nasledujúca" data-title-sk="Nasledujúca" data-title-en="Next"></div>
           <div class="knob-label">NEXT</div>
         </div>
       </div>
@@ -1097,7 +1106,7 @@
             autocomplete="off" autocorrect="off" spellcheck="false">
           <button class="search-btn-retro" id="arc-load-btn" onclick="arcLoad()" data-sk="NAČÍTAJ" data-en="LOAD">NAČÍTAJ</button>
         </div>
-        <div class="archive-hint" data-sk="Pr.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Podporuje kolekcie aj albumy" data-en="Ex.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Supports collections and albums">Pr.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Podporuje kolekcie aj albumy</div>
+        <div class="archive-hint" data-sk="Pr.: <span class='hint-link' onclick='arcUseExample()'>archive.org/details/aadamjacobs</span>" data-en="Ex.: <span class='hint-link' onclick='arcUseExample()'>archive.org/details/aadamjacobs</span>">Pr.: <span class="hint-link" onclick="arcUseExample()">archive.org/details/aadamjacobs</span></div>
       </div>
 
       <!-- Album list (shown for collections) -->
@@ -1113,14 +1122,14 @@
         </div>
         <div class="album-count" id="arc-album-count"></div>
         <div class="tracklist-inner" id="arc-albumlist-inner"></div>
-        <div class="arc-load-more" id="arc-load-more" style="display:none;">▼ NAČÍTAVAM ĎALŠIE...</div>
+        <div class="arc-load-more" id="arc-load-more" style="display:none;" data-sk="▼ NAČÍTAVAM ĎALŠIE..." data-en="▼ LOADING MORE...">▼ NAČÍTAVAM ĎALŠIE...</div>
       </div>
 
       <!-- Tracklist -->
       <div class="tracklist-section" id="arc-tracklist-section">
         <div class="tracklist-title" id="arc-tracklist-title">TRACKLIST</div>
         <div class="tracklist-inner" id="arc-tracklist-inner">
-          <div class="arc-status-msg">Načítavam...</div>
+          <div class="arc-status-msg" id="arc-init-msg" data-sk="Načítavam..." data-en="Loading...">Načítavam...</div>
         </div>
         <button class="stop-btn-retro" id="arc-stop-btn-bottom" onclick="arcStop()" data-sk="■ ZASTAVIŤ PREHRÁVANIE" data-en="■ STOP PLAYBACK" style="margin-top:10px;">■ ZASTAVIŤ PREHRÁVANIE</button>
       </div>
@@ -1133,9 +1142,9 @@
         <button class="lang-btn active" id="btn-sk" onclick="setLang('sk')">SK</button>
         <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
       </div>
-      <span class="model-num">© 2026 Marek Bujko · MIT License</span>
+      <span class="model-num">&nbsp;&nbsp;© 2026 Marek Bujko · MIT License&nbsp;&nbsp;</span>
       <div style="display:flex;align-items:center;gap:6px;">
-        <button class="mode-mini-btn active" id="mode-toggle-btn" onclick="toggleMode()" title="Prepnúť režim">📻</button>
+        <button class="mode-mini-btn active" id="mode-toggle-btn" onclick="toggleMode()" data-title-sk="Prepnúť režim" data-title-en="Switch mode" title="Prepnúť režim">📻</button>
         <div class="vu-meter" id="vu-meter" onclick="cycleTheme()" data-title-sk="Zmeniť tému" data-title-en="Change theme" style="cursor:pointer;">
           <div class="vu-bar" style="height:4px;--vd:0.35s;--vdelay:0s;--vmin:3px;--vmax:10px"></div>
           <div class="vu-bar" style="height:6px;--vd:0.45s;--vdelay:0.05s;--vmin:4px;--vmax:13px"></div>
@@ -1271,6 +1280,12 @@
   <div class="fav-title-retro" data-sk="★ OBĽÚBENÉ STANICE" data-en="★ FAVOURITE STATIONS">★ OBĽÚBENÉ STANICE</div>
   <div id="fav-list"></div>
   <div class="fav-empty-retro" id="fav-empty" style="display:none" data-sk="[ ŽIADNE OBĽÚBENÉ ]" data-en="[ NO FAVOURITES ]">[ ŽIADNE OBĽÚBENÉ ]</div>
+</div>
+
+<div id="arc-fav-popup" style="display:none;position:fixed;z-index:9999;background:linear-gradient(160deg,var(--fav-popup-bg1),var(--fav-popup-bg2));border:1px solid var(--stats-border);border-radius:6px;padding:12px;min-width:240px;max-width:300px;box-shadow:0 12px 40px rgba(0,0,0,0.8);">
+  <div class="fav-title-retro" data-sk="★ OBĽÚBENÉ ALBUMY" data-en="★ FAVOURITE ALBUMS">★ OBĽÚBENÉ ALBUMY</div>
+  <div id="arc-fav-list"></div>
+  <div class="fav-empty-retro" id="arc-fav-empty" style="display:none" data-sk="[ ŽIADNE OBĽÚBENÉ ]" data-en="[ NO FAVOURITES ]">[ ŽIADNE OBĽÚBENÉ ]</div>
 </div>
 
 <audio id="audio-player"></audio>
@@ -1735,13 +1750,15 @@ function toggleStatsPanel() {
   statsPanelOpen = !statsPanelOpen;
   const panel = document.getElementById('stats-panel');
   const btn = document.getElementById('stats-toggle-btn');
+  const arcBtn = document.getElementById('arc-stats-btn');
   if (statsPanelOpen) {
     positionStatsPanel();
     document.getElementById('sp-fav-count').innerText = loadFavs().length;
     document.getElementById('sp-played-count').innerText = playedCount;
   }
   panel.classList.toggle('open', statsPanelOpen);
-  btn.classList.toggle('active', statsPanelOpen);
+  if (btn) btn.classList.toggle('active', statsPanelOpen);
+  if (arcBtn) arcBtn.classList.toggle('active', statsPanelOpen);
 }
 
 window.addEventListener('resize', () => { if (statsPanelOpen) positionStatsPanel(); });
@@ -2188,11 +2205,12 @@ function setLang(lang) {
   document.querySelectorAll('[data-title-sk][data-title-en]').forEach(function(el){
     el.title = el.getAttribute('data-title-'+lang) || el.title;
   });
-  // Idle station label (only if not playing)
+  // Idle station label — only update if in radio mode and nothing is playing
   var sn = document.getElementById('station-name');
   if(sn && sn.getAttribute('data-idle-sk')){
     var ap = document.getElementById('audio-player');
-    if(!ap || !ap._stationObj){
+    var inArchive = typeof currentMode !== 'undefined' && currentMode === 'archive';
+    if(!inArchive && (!ap || !ap._stationObj)){
       sn.innerText = sn.getAttribute('data-idle-'+lang) || sn.innerText;
     }
   }
@@ -2200,13 +2218,24 @@ function setLang(lang) {
   var np = document.getElementById('now-playing');
   if(np) np.title = np.getAttribute('data-title-'+lang) || '';
 
-  // Archive Player LCD idle text (only if in archive mode and not playing)
+  // Archive Player LCD idle text — only if in archive mode AND no album loaded yet
   if (typeof currentMode !== 'undefined' && currentMode === 'archive') {
     var ap2 = document.getElementById('audio-player');
-    var isArchivePlaying = ap2 && !ap2.paused && ap2.src;
-    if (!isArchivePlaying) {
+    var hasArchiveContent = typeof arcIdentifier !== 'undefined' && arcIdentifier;
+    if (!hasArchiveContent) {
+      // No album loaded — safe to update idle text
+      var snEl = document.getElementById('station-name');
+      if (snEl) snEl.textContent = '— ARCHIVE PLAYER —';
       var nowPlEl = document.getElementById('now-playing');
       if (nowPlEl) nowPlEl.textContent = lang === 'en' ? 'Enter Archive.org link...' : 'Vložte Archive.org link...';
+      var metaEl = document.getElementById('station-meta');
+      if (metaEl) metaEl.textContent = 'archive.org / — / —';
+    }
+    // If album IS loaded, leave LCD as-is (arcSetLCD already set the correct text)
+    // But if we are in COLLECTION state (arcIdentifier === arcCollectionId), refresh "Select an album..."
+    if (hasArchiveContent && typeof arcCollectionId !== 'undefined' && arcIdentifier === arcCollectionId) {
+      var nowPlEl2 = document.getElementById('now-playing');
+      if (nowPlEl2) nowPlEl2.textContent = lang === 'en' ? 'Select an album...' : 'Vyber album...';
     }
   }
 }
@@ -2240,6 +2269,9 @@ function toggleMode() {
   switchMode(currentMode === 'radio' ? 'archive' : 'radio');
 }
 
+// Saved archive LCD state so it survives a round-trip to radio mode
+let _arcSavedLCD = null;
+
 function switchMode(mode) {
   if (mode === currentMode) return;
   currentMode = mode;
@@ -2250,44 +2282,59 @@ function switchMode(mode) {
     document.getElementById('ios-vol-notice'),
     document.querySelector('.controls-section'),
   ];
-  const archiveSection  = document.getElementById('archive-section');
-  const btnToggle       = document.getElementById('mode-toggle-btn');
+  const archiveSection = document.getElementById('archive-section');
+  const btnToggle      = document.getElementById('mode-toggle-btn');
 
   if (mode === 'radio') {
+    // ── Save current archive LCD before leaving ──────────────
+    _arcSavedLCD = {
+      station: document.getElementById('station-name').textContent,
+      track:   document.getElementById('now-playing').textContent,
+      meta:    document.getElementById('station-meta').textContent,
+    };
+
     // Show radio, hide archive
     archiveSection.classList.remove('visible');
     radioSections.forEach(el => { if (el) el.style.removeProperty('display'); });
-
     if (btnToggle) { btnToggle.textContent = '📻'; btnToggle.classList.add('active'); }
 
-    // Stop archive audio
+    // Stop archive audio + clear its stop-btn + kill diagnostics timer
     arcStop();
+    setPlayingState(false);          // hides radio stop-btn, stops uptime interval
 
-    // Reset LCD to radio idle
-    const sn = document.getElementById('station-name');
+    // Reset radio LCD to idle
     const ap = document.getElementById('audio-player');
-    // Clear _stationObj since we stopped archive
     if (ap) ap._stationObj = null;
-    if (sn) {
-      sn.innerText = LANG === 'en' ? '[ SELECT STATION ]' : '[ VYBER STANICU ]';
-    }
-    document.getElementById('now-playing').innerText = '♪ —';
+    document.getElementById('station-name').innerText = LANG === 'en' ? '[ SELECT STATION ]' : '[ VYBER STANICU ]';
+    document.getElementById('now-playing').innerText  = '♪ —';
     document.getElementById('station-meta').innerText = '— · —';
 
   } else {
     // Show archive, hide radio
     archiveSection.classList.add('visible');
     radioSections.forEach(el => { if (el) el.style.display = 'none'; });
-
     if (btnToggle) { btnToggle.textContent = '🎵'; btnToggle.classList.add('active'); }
 
-    // Stop radio
+    // Stop radio + hide radio stop-btn + kill diagnostics timer
     stopRadio();
+    setPlayingState(false);
 
-    // Set LCD to archive idle
-    document.getElementById('station-name').innerText = '— ARCHIVE PLAYER —';
-    document.getElementById('now-playing').innerText = LANG === 'en' ? 'Enter Archive.org link...' : 'Vložte Archive.org link...';
-    document.getElementById('station-meta').innerText = 'archive.org / — / —';
+    // ── Restore archive LCD if we have a saved state with real content ──
+    const savedIsReal = _arcSavedLCD &&
+      _arcSavedLCD.station &&
+      _arcSavedLCD.station !== '[ SELECT STATION ]' &&
+      _arcSavedLCD.station !== '[ VYBER STANICU ]' &&
+      _arcSavedLCD.station !== '— ARCHIVE PLAYER —';
+
+    if (savedIsReal) {
+      document.getElementById('station-name').innerText = _arcSavedLCD.station;
+      document.getElementById('now-playing').innerText  = _arcSavedLCD.track;
+      document.getElementById('station-meta').innerText = _arcSavedLCD.meta;
+    } else {
+      document.getElementById('station-name').innerText = '— ARCHIVE PLAYER —';
+      document.getElementById('now-playing').innerText  = LANG === 'en' ? 'Enter Archive.org link...' : 'Vložte Archive.org link...';
+      document.getElementById('station-meta').innerText = 'archive.org / — / —';
+    }
   }
 }
 
@@ -2313,6 +2360,113 @@ function arcExtractId(url) {
   return null;
 }
 
+/* ── ARCHIVE FAVOURITES ── */
+function loadArcFavs() { try { return JSON.parse(localStorage.getItem(_lsNs+'-arc-favs') || '[]'); } catch(e) { return []; } }
+function saveArcFavs(f) { localStorage.setItem(_lsNs+'-arc-favs', JSON.stringify(f)); }
+function isArcFavourite(id) { return loadArcFavs().some(f => f.id === id); }
+
+function handleArcFavBtn() {
+  const popup = document.getElementById('arc-fav-popup');
+  const popupOpen = popup && popup.style.display !== 'none';
+
+  // If popup is open → just close it, do NOT remove from favourites
+  if (popupOpen) {
+    popup.style.display = 'none';
+    return;
+  }
+
+  // Popup is closed → if album loaded and NOT yet saved, save it now
+  if (arcIdentifier && !isArcFavourite(arcIdentifier)) {
+    toggleArcFavourite();
+  }
+
+  // Open popup
+  toggleArcFavPopup();
+}
+
+function toggleArcFavourite() {
+  // arcIdentifier can be an album id or collection id
+  const id = arcIdentifier;
+  if (!id) return;
+  let favs = loadArcFavs();
+  const idx = favs.findIndex(f => f.id === id);
+  if (idx >= 0) {
+    favs.splice(idx, 1);
+  } else {
+    if (favs.length >= 20) favs.shift();
+    // Determine label: use current LCD station-name text
+    const labelEl = document.getElementById('station-name');
+    const label = labelEl ? labelEl.textContent : id;
+    const url = 'https://archive.org/details/' + id;
+    const isCollection = !!arcCollectionId && arcIdentifier === arcCollectionId;
+    favs.push({ id, label, url, isCollection });
+  }
+  saveArcFavs(favs);
+  updateArcFavBtn();
+  renderArcFavs();
+}
+
+function updateArcFavBtn() {
+  const btn = document.getElementById('arc-fav-btn');
+  if (!btn) return;
+  const active = arcIdentifier && isArcFavourite(arcIdentifier);
+  btn.innerText = active ? '★' : '☆';
+  btn.style.color = active ? 'var(--amber-glow)' : '';
+}
+
+function renderArcFavs() {
+  const favs = loadArcFavs();
+  const list = document.getElementById('arc-fav-list');
+  const empty = document.getElementById('arc-fav-empty');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!favs.length) { if (empty) empty.style.display = 'block'; return; }
+  if (empty) empty.style.display = 'none';
+  favs.forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'fav-item-retro';
+    const icon = f.isCollection ? '📂' : '💿';
+    d.innerHTML = `<span style="flex-shrink:0;font-size:0.85rem;">${icon}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(f.label)}</span>`;
+    const del = document.createElement('button');
+    del.className = 'fav-del-retro';
+    del.innerText = '×';
+    del.onclick = e => {
+      e.stopPropagation();
+      let fs = loadArcFavs();
+      fs = fs.filter(x => x.id !== f.id);
+      saveArcFavs(fs);
+      renderArcFavs();
+      updateArcFavBtn();
+    };
+    d.appendChild(del);
+    d.onclick = () => {
+      document.getElementById('arc-input').value = f.url;
+      arcLoad();
+      document.getElementById('arc-fav-popup').style.display = 'none';
+    };
+    list.appendChild(d);
+  });
+}
+
+function toggleArcFavPopup() {
+  const popup = document.getElementById('arc-fav-popup');
+  const btn = document.getElementById('arc-fav-btn');
+  if (!popup) return;
+  if (popup.style.display !== 'none') { popup.style.display = 'none'; return; }
+  renderArcFavs();
+  const r = btn.getBoundingClientRect();
+  popup.style.top = (r.bottom + 6) + 'px';
+  popup.style.left = Math.max(8, r.left - 20) + 'px';
+  popup.style.display = 'block';
+}
+document.addEventListener('click', e => {
+  const popup = document.getElementById('arc-fav-popup');
+  if (popup && popup.style.display !== 'none' && !popup.contains(e.target) && e.target.id !== 'arc-fav-btn' && !e.target.closest('#arc-fav-btn')) {
+    popup.style.display = 'none';
+  }
+});
+document.addEventListener('DOMContentLoaded', () => { renderArcFavs(); updateArcFavBtn(); });
+
 function arcSetLCD(station, track, meta) {
   document.getElementById('station-name').textContent = station || '— NO SIGNAL —';
   document.getElementById('now-playing').textContent  = track   || '';
@@ -2325,6 +2479,12 @@ function arcSetStatus(msg, isError) {
 }
 
 let arcCollectionId = ''; // tracks the parent collection id for back navigation
+
+function arcUseExample() {
+  const inp = document.getElementById('arc-input');
+  if (inp) inp.value = 'https://archive.org/details/aadamjacobs';
+  arcLoad();
+}
 
 async function arcLoad() {
   const raw = document.getElementById('arc-input').value;
@@ -2342,6 +2502,7 @@ async function arcLoad() {
 
 async function arcLoadItem(id, fromCollection) {
   arcIdentifier = id;
+  if (typeof updateArcFavBtn === 'function') updateArcFavBtn();
   arcSetLCD('LOADING...', `${LANG==='en' ? 'Loading' : 'Načítavam'} ${id}...`, `archive.org / ${id}`);
   document.getElementById('arc-tracklist-section').classList.remove('open');
   document.getElementById('arc-tracklist-section').style.display = '';
@@ -2452,6 +2613,9 @@ async function arcLoadCollection(id, meta2) {
   document.getElementById('arc-tracklist-section').classList.remove('open');
 
   // Reset filter state
+  arcCollectionAbort = true;        // cancel any in-progress auto-fetch for previous collection
+  await new Promise(r => setTimeout(r, 0));  // let pending setTimeout callbacks see the abort
+  arcCollectionAbort = false;
   arcAllAlbums = [];
   arcCollectionPage = 1;
   arcCollectionHasMore = true;
@@ -2462,7 +2626,12 @@ async function arcLoadCollection(id, meta2) {
   document.getElementById('arc-load-more').style.display = 'none';
 
   try {
-    await arcFetchCollectionPage(id, 1, true);
+    let hasMore = await arcFetchCollectionPage(id, 1, true);
+    while (hasMore && !arcCollectionAbort && arcCollectionCurrentId === id) {
+      await new Promise(r => setTimeout(r, 1000));
+      if (arcCollectionAbort || arcCollectionCurrentId !== id) break;
+      hasMore = await arcFetchCollectionPage(id, arcCollectionPage, false);
+    }
   } catch(e) {
     albumInner.innerHTML = `<div class="arc-status-msg error">${LANG==='en'?'Error':'Chyba'}: ${e.message}</div>`;
   } finally {
@@ -2470,13 +2639,6 @@ async function arcLoadCollection(id, meta2) {
     loadBtn.textContent = 'LOAD';
   }
 
-  // Setup infinite scroll on album list
-  albumInner.onscroll = function() {
-    if (!arcCollectionHasMore || arcCollectionLoadingMore) return;
-    if (albumInner.scrollTop + albumInner.clientHeight >= albumInner.scrollHeight - 40) {
-      arcFetchCollectionPage(arcCollectionCurrentId, arcCollectionPage, false);
-    }
-  };
 }
 
 // State for paginated collection loading
@@ -2485,16 +2647,17 @@ let arcCollectionPage = 1;
 let arcCollectionHasMore = true;
 let arcCollectionLoadingMore = false;
 let arcCollectionCurrentId = '';
-const ARC_PAGE_SIZE = 40;
+let arcCollectionAbort = false;
+const ARC_PAGE_SIZE = 50;
 
 async function arcFetchCollectionPage(id, page, isFirst) {
-  if (arcCollectionLoadingMore) return;
+  if (arcCollectionLoadingMore) return false;
   arcCollectionLoadingMore = true;
   const loadMore = document.getElementById('arc-load-more');
   if (!isFirst) loadMore.style.display = 'block';
 
   try {
-    const searchUrl = `https://archive.org/advancedsearch.php?q=collection%3A${encodeURIComponent(id)}+mediatype%3Aaudio&fl[]=identifier,title,creator,year,date&sort[]=date+desc&rows=${ARC_PAGE_SIZE}&page=${page}&output=json`;
+    const searchUrl = `https://archive.org/advancedsearch.php?q=collection%3A${encodeURIComponent(id)}+mediatype%3Aaudio&fl[]=identifier&fl[]=title&fl[]=creator&fl[]=year&fl[]=date&sort[]=date+desc&rows=${ARC_PAGE_SIZE}&page=${page}&output=json`;
     const r = await fetch(searchUrl);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
@@ -2504,14 +2667,15 @@ async function arcFetchCollectionPage(id, page, isFirst) {
     if (isFirst && !docs.length) {
       document.getElementById('arc-albumlist-inner').innerHTML = `<div class="arc-status-msg">${LANG==='en'?'No albums found':'Žiadne albumy nenájdené'}</div>`;
       arcCollectionHasMore = false;
-      return;
+      return false;
     }
 
     arcAllAlbums = isFirst ? docs : arcAllAlbums.concat(docs);
     arcCollectionPage = page + 1;
     arcCollectionHasMore = arcAllAlbums.length < total && docs.length === ARC_PAGE_SIZE;
-
     arcFilterAlbums();
+    return arcCollectionHasMore;
+
   } finally {
     arcCollectionLoadingMore = false;
     document.getElementById('arc-load-more').style.display = 'none';
@@ -2553,6 +2717,7 @@ function arcFilterAlbums() {
       <span class="track-dur" style="font-size:0.72rem;flex-shrink:0;">${escHtml(year2)}</span>
     `;
     el.onclick = () => {
+      arcCollectionAbort = true;   // stop background pagination when album is chosen
       albumSection.style.display = 'none';
       arcLoadItem(doc.identifier, true);
     };
@@ -2560,10 +2725,8 @@ function arcFilterAlbums() {
   });
   albumInner.appendChild(frag);
 
-  // If loaded less than one screen and more pages exist, load more
-  if (arcCollectionHasMore && !arcCollectionLoadingMore && albumInner.scrollHeight <= albumInner.clientHeight) {
-    arcFetchCollectionPage(arcCollectionCurrentId, arcCollectionPage, false);
-  }
+  // The auto-fetch loop handles background loading; scroll is a fallback
+  // (fires if auto-load was somehow interrupted and user scrolls to bottom)
 }
 
 function arcShowCollection() {
@@ -2627,6 +2790,7 @@ function arcStop() {
   document.getElementById('arc-time-current').textContent = '0:00';
   const sb = document.getElementById('arc-stop-btn-bottom');
   if (sb) sb.classList.remove('visible');
+  if (typeof updateArcFavBtn === 'function') updateArcFavBtn();
 }
 
 function arcPrevTrack() { if (arcCurrentTrack > 0) arcPlayTrack(arcCurrentTrack - 1); }
