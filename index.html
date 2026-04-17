@@ -727,6 +727,137 @@
   .search-section, .serial-monitor, .stats-panel,
   .case, #lcd { transition: background 0.5s, border-color 0.5s, box-shadow 0.5s; }
 
+  /* ── MODE SWITCHER BUTTON ───────────────────────────────── */
+  .mode-switcher {
+    display: flex; gap: 6px; margin-bottom: 12px;
+  }
+  .mode-btn {
+    flex: 1;
+    background: linear-gradient(180deg, var(--btn-bg1), var(--btn-bg2));
+    border: 1px solid var(--btn-border);
+    border-radius: 5px;
+    padding: 7px 10px;
+    color: var(--chrome);
+    font-family: 'VT323', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: 0.15s;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+  .mode-btn.active {
+    color: var(--amber-glow);
+    border-color: var(--amber);
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(212,130,10,0.2), inset 0 1px 2px rgba(255,200,100,0.1);
+  }
+  .mode-btn:hover:not(.active) { opacity: 0.8; color: var(--amber); }
+
+  /* ── MINI MODE BUTTONS (in bottom strip) ── */
+  .mode-mini-btn {
+    background: linear-gradient(180deg, var(--btn-bg1), var(--btn-bg2));
+    border: 1px solid var(--btn-border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: 0.15s;
+    line-height: 1.4;
+  }
+  .mode-mini-btn.active {
+    opacity: 1;
+    border-color: var(--amber);
+    box-shadow: 0 0 6px rgba(212,130,10,0.25);
+  }
+  .mode-mini-btn:hover:not(.active) { opacity: 0.75; }
+
+  /* ── ARCHIVE PLAYER SECTION (hidden by default) ─────────── */
+  .archive-section {
+    display: none;
+  }
+  .archive-section.visible {
+    display: block;
+  }
+
+  /* ARCHIVE INPUT */
+  .archive-input-section {
+    background: linear-gradient(180deg, var(--panel-bg), var(--panel-bg2));
+    border-radius: 8px;
+    border: 1px solid var(--panel-border);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .archive-hint {
+    font-family: 'VT323', monospace; font-size: 0.75rem; color: var(--lcd-green);
+    opacity: 0.3; margin-top: 6px; letter-spacing: 0.04em;
+  }
+
+  /* TRACKLIST */
+  .tracklist-section {
+    background: linear-gradient(180deg, var(--panel-bg), var(--panel-bg2));
+    border-radius: 8px; border: 1px solid var(--panel-border);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    padding: 14px; margin-bottom: 12px;
+    display: none;
+  }
+  .tracklist-section.open { display: block; }
+  .tracklist-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem;
+    letter-spacing: 0.25em; color: var(--amber);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px; opacity: 0.8;
+  }
+  .tracklist-title::before, .tracklist-title::after { content: ''; flex: 1; height: 1px; background: var(--amber); opacity: 0.2; }
+  .tracklist-inner {
+    max-height: 220px; overflow-y: auto; scrollbar-width: thin;
+    scrollbar-color: #2a1508 transparent;
+    font-family: 'VT323', monospace;
+  }
+  .track-item {
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+    cursor: pointer; border-bottom: 1px solid var(--dark-text);
+    font-size: 0.9rem; color: var(--lcd-green); letter-spacing: 0.03em;
+    transition: background 0.1s;
+  }
+  .track-item:hover { background: rgba(74,255,138,0.05); }
+  .track-item.active { color: var(--amber-glow); background: rgba(212,130,10,0.08); }
+  .track-num { color: var(--amber); opacity: 0.5; width: 22px; flex-shrink: 0; font-size: 0.75rem; }
+  .track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .track-dur { font-size: 0.75rem; color: var(--lcd-green); opacity: 0.4; flex-shrink: 0; }
+  .track-now { width: 10px; flex-shrink: 0; color: var(--amber-glow); font-size: 0.7rem; }
+  .arc-status-msg {
+    font-family: 'VT323', monospace; font-size: 0.85rem;
+    color: var(--lcd-green); opacity: 0.5; text-align: center;
+    padding: 8px 0; letter-spacing: 0.06em;
+  }
+  .arc-status-msg.error { color: #ff5555; opacity: 0.9; }
+
+  /* PROGRESS BAR */
+  .arc-progress-section { margin-bottom: 12px; display: none; }
+  .arc-progress-section.open { display: block; }
+  .arc-progress-bar-wrap {
+    width: 100%; height: 5px; background: #1a1005;
+    border-radius: 3px; border: 1px solid var(--panel-border);
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .arc-progress-fill {
+    height: 100%; background: var(--amber);
+    border-radius: 3px; width: 0%;
+    transition: width 0.5s linear;
+    box-shadow: 0 0 6px rgba(212,130,10,0.5);
+  }
+  .arc-progress-times {
+    display: flex; justify-content: space-between;
+    font-family: 'VT323', monospace; font-size: 0.75rem;
+    color: var(--lcd-green); opacity: 0.4; margin-top: 3px;
+  }
+
+  /* ARCHIVE CONTROLS — override knob labels for archive mode */
+  .arc-controls-section { display: none; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .arc-controls-section.visible { display: flex; }
+
   /* ── MOBILE / iPHONE ─────────────────────────────────────── */
   @media (max-width: 480px) {
     html, body {
@@ -890,21 +1021,76 @@
       <button class="stop-btn-retro" id="stop-btn" onclick="stopRadio()" data-sk="■ ZASTAVIŤ PREHRÁVANIE" data-en="■ STOP PLAYBACK">■ ZASTAVIŤ PREHRÁVANIE</button>
     </div>
 
+    <!-- ═══ ARCHIVE PLAYER SECTION ═══ -->
+    <div class="archive-section" id="archive-section">
+
+      <!-- Archive controls (PREV / NEXT replace TUNING/VOLUME knobs) -->
+      <div class="arc-controls-section visible" id="arc-controls">
+        <div class="knob-group">
+          <div class="knob" id="arc-knob-prev" onclick="arcPrevTrack()" title="Predchádzajúca"></div>
+          <div class="knob-label">PREV</div>
+        </div>
+        <div class="play-controls">
+          <button class="play-btn-retro" id="arc-play-btn" onclick="arcTogglePlay()">▶</button>
+        </div>
+        <div class="knob-group">
+          <div class="knob" id="arc-knob-next" onclick="arcNextTrack()" title="Nasledujúca"></div>
+          <div class="knob-label">NEXT</div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="arc-progress-section" id="arc-progress-section">
+        <div class="arc-progress-bar-wrap" id="arc-progress-bar">
+          <div class="arc-progress-fill" id="arc-progress-fill"></div>
+        </div>
+        <div class="arc-progress-times">
+          <span id="arc-time-current">0:00</span>
+          <span id="arc-time-total">—</span>
+        </div>
+      </div>
+
+      <!-- Archive link input -->
+      <div class="archive-input-section">
+        <div class="search-title" data-sk="ARCHIVE LINK" data-en="ARCHIVE LINK">ARCHIVE LINK</div>
+        <div class="search-row-retro">
+          <input type="text" class="search-input-retro" id="arc-input"
+            placeholder="https://archive.org/details/..." autocomplete="off" autocorrect="off" spellcheck="false">
+          <button class="search-btn-retro" id="arc-load-btn" onclick="arcLoad()">LOAD</button>
+        </div>
+        <div class="archive-hint" data-sk="Pr.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Podporuje audio albumy" data-en="Ex.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Supports audio albums">Pr.: archive.org/details/aadamjacobs &nbsp;·&nbsp; Podporuje audio albumy</div>
+      </div>
+
+      <!-- Tracklist -->
+      <div class="tracklist-section" id="arc-tracklist-section">
+        <div class="tracklist-title">TRACKLIST</div>
+        <div class="tracklist-inner" id="arc-tracklist-inner">
+          <div class="arc-status-msg">Načítavam...</div>
+        </div>
+      </div>
+
+      <button class="stop-btn-retro" id="arc-stop-btn-bottom" onclick="arcStop()" data-sk="■ ZASTAVIŤ PREHRÁVANIE" data-en="■ STOP PLAYBACK">■ ZASTAVIŤ PREHRÁVANIE</button>
+
+    </div><!-- end .archive-section -->
+
     <!-- Bottom decoration -->
     <div class="bottom-strip">
       <div class="lang-switcher">
         <button class="lang-btn active" id="btn-sk" onclick="setLang('sk')">SK</button>
         <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
       </div>
-      <span class="model-num">© 2026 Marek Bujko · MIT License<span class="theme-dot" id="theme-dot"></span></span>
-      <div class="vu-meter" id="vu-meter" onclick="cycleTheme()" data-title-sk="Zmeniť tému" data-title-en="Change theme" style="cursor:pointer;">
-        <div class="vu-bar" style="height:4px;--vd:0.35s;--vdelay:0s;--vmin:3px;--vmax:10px"></div>
-        <div class="vu-bar" style="height:6px;--vd:0.45s;--vdelay:0.05s;--vmin:4px;--vmax:13px"></div>
-        <div class="vu-bar" style="height:8px;--vd:0.55s;--vdelay:0.1s;--vmin:5px;--vmax:14px"></div>
-        <div class="vu-bar" style="height:10px;--vd:0.4s;--vdelay:0.02s;--vmin:6px;--vmax:14px"></div>
-        <div class="vu-bar" style="height:8px;--vd:0.5s;--vdelay:0.08s;--vmin:4px;--vmax:12px"></div>
-        <div class="vu-bar" style="height:6px;--vd:0.38s;--vdelay:0.14s;--vmin:3px;--vmax:10px"></div>
-        <div class="vu-bar" style="height:4px;--vd:0.48s;--vdelay:0.06s;--vmin:2px;--vmax:8px"></div>
+      <span class="model-num">© 2026 Marek Bujko · MIT License</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button class="mode-mini-btn active" id="mode-toggle-btn" onclick="toggleMode()" title="Prepnúť režim">📻</button>
+        <div class="vu-meter" id="vu-meter" onclick="cycleTheme()" data-title-sk="Zmeniť tému" data-title-en="Change theme" style="cursor:pointer;">
+          <div class="vu-bar" style="height:4px;--vd:0.35s;--vdelay:0s;--vmin:3px;--vmax:10px"></div>
+          <div class="vu-bar" style="height:6px;--vd:0.45s;--vdelay:0.05s;--vmin:4px;--vmax:13px"></div>
+          <div class="vu-bar" style="height:8px;--vd:0.55s;--vdelay:0.1s;--vmin:5px;--vmax:14px"></div>
+          <div class="vu-bar" style="height:10px;--vd:0.4s;--vdelay:0.02s;--vmin:6px;--vmax:14px"></div>
+          <div class="vu-bar" style="height:8px;--vd:0.5s;--vdelay:0.08s;--vmin:4px;--vmax:12px"></div>
+          <div class="vu-bar" style="height:6px;--vd:0.38s;--vdelay:0.14s;--vmin:3px;--vmax:10px"></div>
+          <div class="vu-bar" style="height:4px;--vd:0.48s;--vdelay:0.06s;--vmin:2px;--vmax:8px"></div>
+        </div>
       </div>
     </div>
 
@@ -1748,6 +1934,11 @@ document.addEventListener('click', e => {
 });
 
 document.addEventListener('DOMContentLoaded', renderFavs);
+document.addEventListener('DOMContentLoaded', function() {
+  // Init mode toggle button
+  var btnToggle = document.getElementById('mode-toggle-btn');
+  if (btnToggle) { btnToggle.textContent = '📻'; btnToggle.classList.add('active'); }
+});
 
 
 
@@ -1959,7 +2150,7 @@ function setLang(lang) {
   console.log('%c ██████╗ ███████╗███████╗ ██████╗ ███╗   ██╗ █████╗ ███╗   ██╗ ██████╗███████╗',B);
   console.log('%c ██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║██╔══██╗████╗  ██║██╔════╝██╔════╝%c  by Marek Bujko  © 2026',B,w);
   console.log('%c ██████╔╝█████╗  ███████╗██║   ██║██╔██╗ ██║███████║██╔██╗ ██║██║     █████╗  %c  MIT License',B,w);
-  console.log('%c ██╔══██╗██╔══╝  ╚════██║██║   ██║██║╚██╗██║██╔══██║██║╚██╗██║██║     ██╔══╝  %c  Online Radio · v1.0',B,w);
+  console.log('%c ██╔══██╗██╔══╝  ╚════██║██║   ██║██║╚██╗██║██╔══██║██║╚██╗██║██║     ██╔══╝  %c  Online Radio · v1.1',B,w);
   console.log('%c ██║  ██║███████╗███████║╚██████╔╝██║ ╚████║██║  ██║██║ ╚████║╚██████╗███████╗%c  Single-file · No deps',B,d);
   console.log('%c ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝%c',B,d);
   console.log('%c ',d);
@@ -1970,6 +2161,289 @@ function setLang(lang) {
   console.log('%chttps://github.com/marekbujko',w);
   console.log('%c ',d);
 })();
+
+/* ══════════════════════════════════════════════════════════════
+   MODE SWITCHER — Radio ↔ Archive Player
+   ══════════════════════════════════════════════════════════════ */
+let currentMode = 'radio'; // 'radio' | 'archive'
+
+function toggleMode() {
+  switchMode(currentMode === 'radio' ? 'archive' : 'radio');
+}
+
+function switchMode(mode) {
+  if (mode === currentMode) return;
+  currentMode = mode;
+
+  const radioSections = [
+    document.querySelector('.search-section'),
+    document.getElementById('vol-section'),
+    document.getElementById('ios-vol-notice'),
+    document.querySelector('.controls-section'),
+  ];
+  const archiveSection  = document.getElementById('archive-section');
+  const btnToggle       = document.getElementById('mode-toggle-btn');
+
+  if (mode === 'radio') {
+    // Show radio, hide archive
+    archiveSection.classList.remove('visible');
+    radioSections.forEach(el => { if (el) el.style.removeProperty('display'); });
+
+    if (btnToggle) { btnToggle.textContent = '📻'; btnToggle.classList.add('active'); }
+
+    // Stop archive audio
+    arcStop();
+
+    // Reset LCD to radio idle
+    const sn = document.getElementById('station-name');
+    const ap = document.getElementById('audio-player');
+    if (sn && (!ap || !ap._stationObj)) {
+      sn.innerText = LANG === 'en' ? '[ SELECT STATION ]' : '[ VYBER STANICU ]';
+    }
+    document.getElementById('station-meta').innerText = '— · —';
+
+  } else {
+    // Show archive, hide radio
+    archiveSection.classList.add('visible');
+    radioSections.forEach(el => { if (el) el.style.display = 'none'; });
+
+    if (btnToggle) { btnToggle.textContent = '🎵'; btnToggle.classList.add('active'); }
+
+    // Stop radio
+    stopRadio();
+
+    // Set LCD to archive idle
+    document.getElementById('station-name').innerText = '— ARCHIVE PLAYER —';
+    document.getElementById('now-playing').innerText = LANG === 'en' ? 'Enter Archive.org link...' : 'Vložte Archive.org link...';
+    document.getElementById('station-meta').innerText = 'archive.org / — / —';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ARCHIVE PLAYER LOGIC
+   ══════════════════════════════════════════════════════════════ */
+let arcTracks       = [];
+let arcCurrentTrack = -1;
+let arcIdentifier   = '';
+
+function arcFmtTime(s) {
+  if (!s || isNaN(s)) return '—';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+function arcExtractId(url) {
+  url = url.trim();
+  const m = url.match(/archive\.org\/details\/([^/?#]+)/);
+  if (m) return m[1];
+  if (/^[a-zA-Z0-9_.-]+$/.test(url) && !url.includes('/')) return url;
+  return null;
+}
+
+function arcSetLCD(station, track, meta) {
+  document.getElementById('station-name').textContent = station || '— NO SIGNAL —';
+  document.getElementById('now-playing').textContent  = track   || '';
+  document.getElementById('station-meta').textContent = meta    || 'archive.org / — / —';
+}
+
+function arcSetStatus(msg, isError) {
+  const inner = document.getElementById('arc-tracklist-inner');
+  inner.innerHTML = `<div class="arc-status-msg ${isError ? 'error' : ''}">${msg}</div>`;
+}
+
+async function arcLoad() {
+  const raw = document.getElementById('arc-input').value;
+  const id  = arcExtractId(raw);
+  if (!id) {
+    arcSetLCD('ERROR', LANG==='en' ? 'Invalid link or identifier' : 'Neplatný link alebo identifikátor', 'archive.org / ? / ?');
+    document.getElementById('arc-tracklist-section').classList.add('open');
+    arcSetStatus(LANG==='en' ? 'Invalid link. Example: https://archive.org/details/aadamjacobs' : 'Neplatný link. Príklad: https://archive.org/details/aadamjacobs', true);
+    return;
+  }
+
+  arcIdentifier = id;
+  arcSetLCD('LOADING...', `${LANG==='en' ? 'Loading' : 'Načítavam'} ${id}...`, `archive.org / ${id}`);
+  document.getElementById('arc-tracklist-section').classList.add('open');
+  arcSetStatus(LANG==='en' ? 'Loading metadata...' : 'Načítavam metadata...');
+  const loadBtn = document.getElementById('arc-load-btn');
+  loadBtn.disabled = true;
+  loadBtn.textContent = '...';
+
+  try {
+    const resp = await fetch(`https://archive.org/metadata/${id}`, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (!data || !data.files) throw new Error(LANG==='en' ? 'No files found' : 'Žiadne súbory');
+
+    const audioExts = ['mp3','ogg','flac','wav','aac','m4a','opus'];
+    let audioFiles = data.files.filter(f => {
+      if (!f.name) return false;
+      const ext = f.name.split('.').pop().toLowerCase();
+      return audioExts.includes(ext) && f.source !== 'derivative';
+    });
+    if (!audioFiles.length) {
+      audioFiles = data.files.filter(f => {
+        if (!f.name) return false;
+        const ext = f.name.split('.').pop().toLowerCase();
+        return ['mp3','ogg'].includes(ext);
+      });
+    }
+    audioFiles = audioFiles.sort((a, b) => {
+      const ea = a.name.split('.').pop().toLowerCase();
+      const eb = b.name.split('.').pop().toLowerCase();
+      if (ea === 'mp3' && eb !== 'mp3') return -1;
+      if (eb === 'mp3' && ea !== 'mp3') return 1;
+      return (a.track || a.name).localeCompare(b.track || b.name);
+    });
+    if (!audioFiles.length) throw new Error(LANG==='en' ? 'No audio files found' : 'Žiadne audio súbory');
+
+    arcTracks = audioFiles.map(f => ({
+      name: f.title || f.name.replace(/\.[^.]+$/, ''),
+      url:  `https://archive.org/download/${id}/${encodeURIComponent(f.name)}`,
+      duration: f.length ? parseFloat(f.length) : null,
+      format: f.name.split('.').pop().toUpperCase()
+    }));
+
+    const meta2      = data.metadata || {};
+    const albumTitle = meta2.title || id;
+    const creator    = Array.isArray(meta2.creator) ? meta2.creator[0] : (meta2.creator || '');
+    const year       = meta2.year || '';
+
+    arcSetLCD(
+      albumTitle.toUpperCase().substring(0, 28),
+      creator ? `${creator}${year ? ' · ' + year : ''}` : '',
+      `archive.org / ${id} / ${arcTracks.length} ${LANG==='en' ? 'tracks' : 'tráckov'}`
+    );
+
+    arcRenderTracklist();
+    document.getElementById('arc-tracklist-section').classList.add('open');
+    arcPlayTrack(0);
+
+  } catch(e) {
+    arcSetLCD('ERROR', String(e), `archive.org / ${id}`);
+    arcSetStatus(`Chyba: ${e.message}`, true);
+  } finally {
+    loadBtn.disabled = false;
+    loadBtn.textContent = 'LOAD';
+  }
+}
+
+function arcRenderTracklist() {
+  const inner = document.getElementById('arc-tracklist-inner');
+  if (!arcTracks.length) { inner.innerHTML = `<div class="arc-status-msg">${LANG==='en' ? 'No tracks' : 'Žiadne trácksy'}</div>`; return; }
+  inner.innerHTML = arcTracks.map((t, i) => `
+    <div class="track-item${i === arcCurrentTrack ? ' active' : ''}" data-idx="${i}">
+      <span class="track-now">${i === arcCurrentTrack ? '▶' : ''}</span>
+      <span class="track-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="track-name">${t.name}</span>
+      <span class="track-dur">${t.duration ? arcFmtTime(t.duration) : ''}</span>
+    </div>
+  `).join('');
+  inner.querySelectorAll('.track-item').forEach(el => {
+    el.addEventListener('click', () => arcPlayTrack(parseInt(el.dataset.idx)));
+  });
+  const active = inner.querySelector('.active');
+  if (active) active.scrollIntoView({ block: 'nearest' });
+}
+
+function arcPlayTrack(idx) {
+  if (idx < 0 || idx >= arcTracks.length) return;
+  arcCurrentTrack = idx;
+  const t = arcTracks[idx];
+
+  const ap = document.getElementById('audio-player');
+  ap.src = t.url;
+  ap.volume = parseFloat(document.getElementById('volume-slider').value);
+  ap.play().catch(() => {});
+
+  document.getElementById('now-playing').textContent = t.name;
+  document.getElementById('arc-progress-section').classList.add('open');
+  const sb = document.getElementById('arc-stop-btn-bottom');
+  if (sb) sb.classList.add('visible');
+  arcRenderTracklist();
+}
+
+function arcTogglePlay() {
+  const ap = document.getElementById('audio-player');
+  if (!ap.src || !arcTracks.length) return;
+  if (ap.paused) ap.play(); else ap.pause();
+}
+
+function arcStop() {
+  const ap = document.getElementById('audio-player');
+  ap.pause();
+  ap.currentTime = 0;
+  document.getElementById('arc-progress-fill').style.width = '0%';
+  document.getElementById('arc-time-current').textContent = '0:00';
+  const sb = document.getElementById('arc-stop-btn-bottom');
+  if (sb) sb.classList.remove('visible');
+}
+
+function arcPrevTrack() { if (arcCurrentTrack > 0) arcPlayTrack(arcCurrentTrack - 1); }
+function arcNextTrack() { if (arcCurrentTrack < arcTracks.length - 1) arcPlayTrack(arcCurrentTrack + 1); }
+
+/* ── Archive audio events (shared audio element) ── */
+const _origAudioPlayer = document.getElementById('audio-player');
+
+_origAudioPlayer.addEventListener('play', () => {
+  if (currentMode !== 'archive') return;
+  document.getElementById('arc-play-btn').textContent = '⏸';
+  document.getElementById('on-air-badge').classList.add('active');
+  setPlayingState(true);
+});
+_origAudioPlayer.addEventListener('pause', () => {
+  if (currentMode !== 'archive') return;
+  document.getElementById('arc-play-btn').textContent = '▶';
+  document.getElementById('on-air-badge').classList.remove('active');
+  setPlayingState(false);
+});
+_origAudioPlayer.addEventListener('ended', () => {
+  if (currentMode !== 'archive') return;
+  if (arcCurrentTrack < arcTracks.length - 1) {
+    arcPlayTrack(arcCurrentTrack + 1);
+  } else {
+    document.getElementById('arc-play-btn').textContent = '▶';
+    setPlayingState(false);
+  }
+});
+_origAudioPlayer.addEventListener('timeupdate', () => {
+  if (currentMode !== 'archive') return;
+  const ap = _origAudioPlayer;
+  if (ap.duration) {
+    const pct = (ap.currentTime / ap.duration) * 100;
+    document.getElementById('arc-progress-fill').style.width = pct + '%';
+    document.getElementById('arc-time-current').textContent = arcFmtTime(ap.currentTime);
+    document.getElementById('arc-time-total').textContent   = arcFmtTime(ap.duration);
+  }
+});
+_origAudioPlayer.addEventListener('error', () => {
+  if (currentMode !== 'archive') return;
+  document.getElementById('now-playing').textContent = LANG==='en' ? 'Error loading file' : 'Chyba pri načítaní súboru';
+  setPlayingState(false);
+});
+
+// Progress bar click for archive mode
+document.getElementById('arc-progress-bar') && document.getElementById('arc-progress-bar').addEventListener('click', e => {
+  if (currentMode !== 'archive') return;
+  const ap = _origAudioPlayer;
+  if (!ap.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  ap.currentTime = ((e.clientX - rect.left) / rect.width) * ap.duration;
+});
+
+// Auto-load on paste of archive.org URL
+document.getElementById('arc-input') && document.getElementById('arc-input').addEventListener('paste', () => {
+  setTimeout(() => {
+    const val = document.getElementById('arc-input').value;
+    if (val.includes('archive.org/details/')) arcLoad();
+  }, 100);
+});
+document.getElementById('arc-input') && document.getElementById('arc-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') arcLoad();
+});
 
 /* Suppress console output in production — banner above runs first, so it still shows */
 console.log   = () => {};
