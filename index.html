@@ -1826,6 +1826,9 @@ function playStation(s) {
   ap.src = s.url;
   ap._stationObj = s;
 
+  // Report click to Radio Browser (community courtesy)
+  if (s.stationuuid) fetch(`${_apiBase}/json/url/${s.stationuuid}`).catch(() => {});
+
   // Open new history entry
   stationHistory.push({
     name: (s.name || s.stationuuid || '?'),
