@@ -2236,6 +2236,31 @@ function setLang(lang) {
     if (hasArchiveContent && typeof arcCollectionId !== 'undefined' && arcIdentifier === arcCollectionId) {
       var nowPlEl2 = document.getElementById('now-playing');
       if (nowPlEl2) nowPlEl2.textContent = lang === 'en' ? 'Select an album...' : 'Vyber album...';
+      // Refresh album count label
+      var countEl2 = document.getElementById('arc-album-count');
+      if (countEl2 && typeof arcAllAlbums !== 'undefined' && arcAllAlbums.length > 0) {
+        var arcInput = document.getElementById('arc-album-search');
+        var nameQ2 = arcInput ? arcInput.value.trim().toLowerCase() : '';
+        var filteredLen = nameQ2
+          ? arcAllAlbums.filter(function(d){ return (d.title || d.identifier || '').toLowerCase().includes(nameQ2); }).length
+          : arcAllAlbums.length;
+        if (filteredLen < arcAllAlbums.length) {
+          countEl2.textContent = filteredLen + ' / ' + arcAllAlbums.length + (arcCollectionHasMore ? '+' : '');
+        } else {
+          countEl2.textContent = arcAllAlbums.length + (arcCollectionHasMore ? '+' : '') + ' ' + (lang === 'en' ? 'albums' : 'albumov');
+        }
+      }
+    }
+    // If a single album (tracklist) is loaded, refresh LCD third line (tracks count)
+    if (hasArchiveContent && typeof arcCollectionId !== 'undefined' && arcIdentifier !== arcCollectionId) {
+      var metaEl2 = document.getElementById('station-meta');
+      if (metaEl2 && typeof arcTracks !== 'undefined' && arcTracks.length > 0) {
+        var metaParts = metaEl2.textContent.split(' / ');
+        if (metaParts.length >= 3) {
+          metaParts[2] = arcTracks.length + ' ' + (lang === 'en' ? 'tracks' : 'trackov');
+          metaEl2.textContent = metaParts.join(' / ');
+        }
+      }
     }
   }
 }
