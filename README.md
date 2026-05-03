@@ -1,4 +1,6 @@
 # Online Radio - Resonance
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
+[![GitHub stars](https://img.shields.io/github/stars/marekbujko/mb-resonance?style=social)](https://github.com/marekbujko/mb-resonance/stargazers)
 
 Online Radio code based on the Web UI from RGB Binary Clock project.
 
